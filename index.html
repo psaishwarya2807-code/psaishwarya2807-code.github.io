@@ -1,65 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Food Image Classifier</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Classifier</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background: #f4f4f4;
             text-align: center;
             padding: 20px;
         }
-        .container {
-            background: white;
+        #container {
+            background: #fff;
             padding: 20px;
-            border-radius: 10px;
-            max-width: 400px;
+            max-width: 500px;
             margin: auto;
+            border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
         #result {
-            margin-top: 20px;
             font-size: 20px;
             font-weight: bold;
-        }
-        img {
-            max-width: 100%;
             margin-top: 15px;
-            border-radius: 10px;
+        }
+        .info-box {
+            background: #e9ffe8;
+            padding: 10px;
+            border-left: 4px solid green;
+            margin-top: 10px;
+            text-align: left;
+        }
+        .junk {
+            background: #ffe8e8;
+            border-left: 4px solid red;
         }
     </style>
 </head>
 <body>
 
-<h2>🍎 Food Image Classifier</h2>
+    <div id="container">
+        <h2>🍔 Food Classifier</h2>
+        <p>Upload an image to identify the food and check if it's healthy or junk.</p>
 
-<div class="container">
-    <input type="file" id="imageUpload" accept="image/*">
-    <br><br>
-    <button onclick="predict()">Predict</button>
+        <input type="file" id="imageInput" accept="image/*"><br>
+        <img id="preview" style="display:none">
 
-    <div id="result"></div>
-    <img id="preview" style="display:none;">
-</div>
+        <div id="result"></div>
+        <div id="details"></div>
+    </div>
 
 <script>
-function predict() {
-    let fileInput = document.getElementById("imageUpload");
-    let result = document.getElementById("result");
-    let preview = document.getElementById("preview");
+    const FOOD_DATA = {
+        "apple": {
+            type: "Healthy",
+            benefits: "Rich in fiber, improves digestion, good for skin.",
+            bestTime: "Morning or evening.",
+            ingredients: "Natural fruit."
+        },
+        "pizza": {
+            type: "Junk",
+            benefits: "Tasty but high in calories.",
+            bestTime: "Occasionally, not daily.",
+            ingredients: "Cheese, refined flour, oil."
+        },
+        "burger": {
+            type: "Junk",
+            benefits: "High energy food.",
+            bestTime: "Afternoon.",
+            ingredients: "Bread, cheese, sauces, fried patty."
+        },
+        "banana": {
+            type: "Healthy",
+            benefits: "High potassium, boosts energy.",
+            bestTime: "Morning pre-workout.",
+            ingredients: "Natural fruit."
+        }
+    };
 
-    if (!fileInput.files[0]) {
-        result.innerHTML = "Please upload an image!";
-        return;
-    }
+    document.getElementById("imageInput").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById("preview");
+        const result = document.getElementById("result");
+        const details = document.getElementById("details");
 
-    let file = fileInput.files[0];
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
 
-    // Placeholder prediction (we will add real AI model next)
-    result.innerHTML = "Predicting... (AI model coming soon)";
-}
+        // Simple mock classification (choose randomly)
+        const foods = Object.keys(FOOD_DATA);
+        const randomFood = foods[Math.floor(Math.random() * foods.length)];
+        const foodInfo = FOOD_DATA[randomFood];
+
+        result.textContent = "Identified: " + randomFood.toUpperCase();
+
+        details.innerHTML = `
+            <div class="info-box ${foodInfo.type === "Junk" ? "junk" : ""}">
+                <p><strong>Type:</strong> ${foodInfo.type}</p>
+                <p><strong>Ingredients:</strong> ${foodInfo.ingredients}</p>
+                <p><strong>Benefits:</strong> ${foodInfo.benefits}</p>
+                <p><strong>Best time to eat:</strong> ${foodInfo.bestTime}</p>
+            </div>
+        `;
+    });
 </script>
 
 </body>
