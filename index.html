@@ -1,16 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Classifier</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 40px;
+            background: #f0f0f0;
+        }
+        #container {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #preview {
+            width: 100%;
+            margin-top: 15px;
+            display: none;
+        }
+        h2 {
+            color: #333;
+        }
+    </style>
+</head>
+
 <body>
-    <h2>Food Classifier</h2>
+
     <h2>Food Classifier</h2>
 
     <div id="container">
-        <input type="file" accept="image/*" id="imageUpload">
-        <img id="preview" src="" style="display:none;">
+        <input type="file" id="imageUpload" accept="image/*" />
+
+        <img id="preview" src="" />
+
         <div id="result"></div>
         <div id="extra-info"></div>
     </div>
 
     <script>
-        document.getElementById("imageUpload").addEventListener("change", function(event) {
+        document.getElementById("imageUpload").onchange = function(event) {
             const file = event.target.files[0];
             const reader = new FileReader();
 
@@ -23,32 +59,14 @@
             };
 
             reader.readAsDataURL(file);
-        });
+        };
 
         function classifyFood() {
-            const result = document.getElementById("result");
-            const extra = document.getElementById("extra-info");
-
-            // Temporary sample AI logic
-            const foods = ["Pizza", "Burger", "Salad", "Apple", "Fries"];
-            const choice = foods[Math.floor(Math.random() * foods.length)];
-
-            if (choice === "Salad" || choice === "Apple") {
-                result.innerHTML = "Healthy Food: " + choice;
-                extra.innerHTML = `
-                    <div class="info-box">
-                        <p><b>Benefits:</b> High nutrients, good for digestion.</p>
-                        <p><b>Best time to eat:</b> Morning / Afternoon</p>
-                    </div>`;
-            } else {
-                result.innerHTML = "Junk Food: " + choice;
-                extra.innerHTML = `
-                    <div class="info-box junk">
-                        <p><b>Reason:</b> High calories and oil.</p>
-                        <p><b>Limit consumption.</b></p>
-                    </div>`;
-            }
+            // Simple example result
+            document.getElementById("result").innerText = "Classification result will appear here.";
+            document.getElementById("extra-info").innerText = "Extra info appears here.";
         }
     </script>
+
 </body>
 </html>
