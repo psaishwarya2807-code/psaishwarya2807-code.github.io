@@ -1,62 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Food Classifier</title>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f7f7f7;
-        text-align: center;
-        margin: 0;
-        padding: 40px;
-    }
-
-    .container {
-        background: white;
-        padding: 25px;
-        border-radius: 10px;
-        width: 85%;
-        margin: auto;
-        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-    }
-
-    input[type="file"] {
-        padding: 10px;
-        margin-top: 20px;
-    }
-
-    #result {
-        margin-top: 20px;
-        font-size: 20px;
-        font-weight: bold;
-    }
-</style>
-</head>
-
 <body>
-    <div class="container">
-        <h1>🍔 Food Classifier</h1>
-        <p>Upload an image to identify the food and check if it's healthy or junk.</p>
+    <h2>Food Classifier</h2>
 
-        <input type="file" id="upload" accept="image/*" />
-
+    <div id="container">
+        <input type="file" accept="image/*" id="imageUpload">
+        <img id="preview" src="" style="display:none;">
         <div id="result"></div>
+        <div id="extra-info"></div>
     </div>
 
-<script>
-document.getElementById("upload").addEventListener("change", function() {
-    let result = document.getElementById("result");
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
 
-    result.innerHTML = "⏳ Classifying...";
+            reader.onload = function() {
+                const img = document.getElementById("preview");
+                img.src = reader.result;
+                img.style.display = "block";
 
-    setTimeout(() => {
-        result.innerHTML = "⚠️ AI model not added yet. But website is working!";
-    }, 2000);
-});
-</script>
+                classifyFood();
+            };
 
+            reader.readAsDataURL(file);
+        });
+
+        function classifyFood() {
+            const result = document.getElementById("result");
+            const extra = document.getElementById("extra-info");
+
+            // Temporary sample AI logic
+            const foods = ["Pizza", "Burger", "Salad", "Apple", "Fries"];
+            const choice = foods[Math.floor(Math.random() * foods.length)];
+
+            if (choice === "Salad" || choice === "Apple") {
+                result.innerHTML = "Healthy Food: " + choice;
+                extra.innerHTML = `
+                    <div class="info-box">
+                        <p><b>Benefits:</b> High nutrients, good for digestion.</p>
+                        <p><b>Best time to eat:</b> Morning / Afternoon</p>
+                    </div>`;
+            } else {
+                result.innerHTML = "Junk Food: " + choice;
+                extra.innerHTML = `
+                    <div class="info-box junk">
+                        <p><b>Reason:</b> High calories and oil.</p>
+                        <p><b>Limit consumption.</b></p>
+                    </div>`;
+            }
+        }
+    </script>
 </body>
 </html>
