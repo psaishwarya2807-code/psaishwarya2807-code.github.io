@@ -1,100 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Food Classifier</title>
+<script>
+    let model;
 
-    <!-- TensorFlow and MobileNet -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #f2f2f2;
-            padding-top: 30px;
-        }
-        #previewImage {
-            width: 250px;
-            display: none;
-            margin-top: 15px;
-            border-radius: 10px;
-        }
-        #result, #extraInfo {
-            font-size: 18px;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            background: #4CAF50;
-            color: white;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <h1>Food Classifier</h1>
-
-    <input type="file" id="imageUpload" accept="image/*">
-    <button onclick="classifyImage()">Classify</button>
-
-    <img id="previewImage">
-
-    <p id="result"></p>
-    <p id="extraInfo"></p>
-
-    <script>
-        let model;
-
-        async function loadModel() {
+    async function loadModel() {
+        try {
             model = await mobilenet.load();
-            console.log("Model Loaded Successfully!");
+            console.log("Model loaded");
+        } catch (error) {
+            console.error("Model loading failed:", error);
         }
-        loadModel();
+    }
 
-        document.getElementById("imageUpload").addEventListener("change", () => {
-            const file = document.getElementById("imageUpload").files[0];
-            const imgPreview = document.getElementById("previewImage");
+    loadModel();
 
-            imgPreview.src = URL.createObjectURL(file);
-            imgPreview.style.display = "block";
-        });
+    document.getElementById("imageUpload").addEventListener("change", () => {
+        const file = document.getElementById("imageUpload").files[0];
+        const preview = document.getElementById("previewImage");
 
-        async function classifyImage() {
-            document.getElementById("result").textContent = "Classifying...";
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+    });
 
+    async function classifyImage() {
+        const resultText = document.getElementById("result");
+        const extra = document.getElementById("extraInfo");
+
+        resultText.textContent = "Classifying...";
+        extra.textContent = "";
+
+        try {
             const img = document.getElementById("previewImage");
+
             const prediction = await model.classify(img);
             const item = prediction[0].className.toLowerCase();
 
-            document.getElementById("result").textContent =
-                "Detected: " + prediction[0].className;
+            resultText.textContent = "Detected: " + prediction[0].className;
 
             let info = "";
 
-            if (item.includes("pizza")) {
-                info = "🍕 Junk Food | Best time: Avoid daily";
+            if (item.includes("banana")) {
+                info = "🍌 Healthy Food | Best time: Afternoon";
             } else if (item.includes("apple")) {
                 info = "🍎 Healthy Food | Best time: Morning";
-            } else if (item.includes("banana")) {
-                info = "🍌 Healthy Food | Best time: Afternoon";
+            } else if (item.includes("pizza")) {
+                info = "🍕 Junk Food | Best time: Avoid daily";
             } else if (item.includes("orange")) {
                 info = "🍊 Healthy Food | Best time: Morning";
             } else {
                 info = "Food details not in database.";
             }
 
-            document.getElementById("extraInfo").textContent = info;
-        }
-    </script>
+            extra.textContent = info;
 
-</body>
-</html>
+        } catch (error) {
+            resultText.textContent = "Error Classifying!";
+            console.error(error);
+        }
+    }
+</script>
