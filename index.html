@@ -1,39 +1,3 @@
-<script>
-    let model;
-
-    async function loadModel() {
-        model = await mobilenet.load();
-        console.log("Model Loaded!");
-    }
-    loadModel();
-
-    document.getElementById("imageUpload").addEventListener("change", () => {
-        const file = document.getElementById("imageUpload").files[0];
-        const imgPreview = document.getElementById("previewImage");
-
-        imgPreview.src = URL.createObjectURL(file);
-        imgPreview.style.display = "block";
-    });
-
-    const foodInfo = {
-        "banana": {
-            healthy: "Healthy",
-            calories: "105 kcal",
-            nutrients: "Potassium, Vitamin B6, Vitamin C, Fiber",
-            benefits: "Boosts energy, good for digestion",
-            bestTime: "Afternoon"
-        },
-        "apple": {
-            healthy: "Healthy",
-            calories: "95 kcal",
-            nutrients: "Fiber, Vitamin C, Antioxidants",
-            benefits: "Good for heart, controls weight",
-            bestTime: "Morning"
-        },
-        "pizza": {
-            healthy: "Junk Food",
-            calories: "266 kcal per slice",
-            nutrients: "High carbs, high fat, processed cheese",
             benefits: "Tasty but unhealthy",
             bestTime: "Avoid daily"
         },
