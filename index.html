@@ -45,6 +45,7 @@
         <div id="extra-info"></div>
     </div>
 
+    <!-- Handle image upload + preview -->
     <script>
         document.getElementById("imageUpload").onchange = function(event) {
             const file = event.target.files[0];
@@ -60,11 +61,35 @@
 
             reader.readAsDataURL(file);
         };
+    </script>
 
-        function classifyFood() {
-            // Simple example result
-            document.getElementById("result").innerText = "Classification result will appear here.";
-            document.getElementById("extra-info").innerText = "Extra info appears here.";
+    <!-- TensorFlow JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.9.0"></script>
+
+    <!-- Classifier code -->
+    <script>
+        async function classifyFood() {
+            const img = document.getElementById("preview");
+
+            // Load MobileNet model
+            const model = await tf.loadLayersModel(
+                "https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_140_224/classification/3/default/1",
+                { fromTFHub: true }
+            );
+
+            const processed = tf.browser.fromPixels(img)
+                .resizeNearestNeighbor([224, 224])
+                .toFloat()
+                .expandDims();
+
+            const prediction = model.predict(processed);
+            const resultIndex = prediction.argMax(-1).dataSync()[0];
+
+            document.getElementById("result").innerText =
+                "Prediction ID: " + resultIndex;
+
+            document.getElementById("extra-info").innerText =
+                "More details coming soon!";
         }
     </script>
 
