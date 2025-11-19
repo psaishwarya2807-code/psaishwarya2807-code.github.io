@@ -4,15 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Classifier</title>
+
+    <!-- TensorFlow + MobileNet -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 0 12px rgba(0,0,0,0.2);
+        }
+
+        img {
+            width: 100%;
+            max-width: 350px;
+            margin-top: 15px;
+            border-radius: 10px;
+        }
+
+        input {
+            margin-top: 10px;
+        }
+
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #extraInfo {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #444;
+        }
+    </style>
+
 </head>
+
 <body>
-    <h1>Food Classifier</h1>
 
-    <input type="file" id="imageInput" accept="image/*">
-    <button onclick="classifyImage()">Classify</button>
+    <div class="container">
+        <h2>Food Classifier</h2>
 
-    <p id="result"></p>
+        <!-- Upload input -->
+        <input type="file" id="imageUpload" accept="image/*">
 
-    <script src="script.js"></script>
+        <!-- Preview image -->
+        <img id="previewImage" src="" alt="">
+
+        <!-- Results -->
+        <h3 id="result"></h3>
+        <p id="extraInfo"></p>
+    </div>
+
+    <script>
+        let model;
+
+        async function loadModel() {
+            model = await mobilenet.load();
+            console.log("Model Loaded");
+        }
+
+        loadModel();
+
+        // Image upload listener
+        document.getElementById("imageUpload").addEventListener("change", function(event) {
+            let file = event.target.files[0];
+            let img = document.getElementById("previewImage");
+            img.src = URL.createObjectURL(file);
+
+            img.onload = async function () {
+                let prediction = await model.classify(img);
+                let item = prediction[0].className.toLowerCase();
+
+                document.getElementById("result").textContent = "Detected: " + prediction[0].className;
+
+                let info = "";
+
+                if (item.includes("pizza")) {
+                    info = "🍕 Junk Food | Best time: Avoid daily";
+                } 
+                else if (item.includes("apple")) {
+                    info = "🍎 Healthy Food | Best time: Morning";
+                } 
+                else if (item.includes("banana")) {
+                    info = "🍌 Healthy Food | Best time: Afternoon";
+                } 
+                else {
+                    info = "Food details not in database.";
+                }
+
+                document.getElementById("extraInfo").textContent = info;
+            }
+        });
+    </script>
+
 </body>
 </html>
