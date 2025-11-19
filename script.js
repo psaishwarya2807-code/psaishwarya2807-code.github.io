@@ -1,104 +1,66 @@
 // Food Database
-const foodData = {
+const foodDatabase = {
     "banana": {
-        calories: "105 kcal per 100g",
+        calories: "105 kcal",
         nutrients: "Potassium, Vitamin B6, Vitamin C, Fiber",
-        benefits: "Boosts energy, improves digestion, supports heart health",
+        benefits: "Good for digestion, boosts energy",
         bestTime: "Morning or afternoon",
         category: "Healthy"
     },
     "apple": {
-        calories: "52 kcal per 100g",
-        nutrients: "Vitamin C, Fiber, Antioxidants",
-        benefits: "Good for heart, digestion, and immunity",
-        bestTime: "Any time of day",
-        category: "Healthy"
-    },
-    "orange": {
-        calories: "47 kcal per 100g",
-        nutrients: "Vitamin C, Folate, Potassium",
-        benefits: "Boosts immunity, good for skin, helps hydration",
+        calories: "95 kcal",
+        nutrients: "Fiber, Vitamin C, Potassium",
+        benefits: "Boosts immunity, good for heart",
         bestTime: "Morning",
         category: "Healthy"
     },
     "pizza": {
         calories: "266 kcal per slice",
-        nutrients: "Carbs, Fat, Sodium",
-        benefits: "Tasty but not nutritious",
+        nutrients: "Carbs, Fats, Sodium",
+        benefits: "Tasty but low nutrition",
         bestTime: "Occasionally",
-        category: "Junk"
+        category: "Junk Food"
     },
     "burger": {
-        calories: "295 kcal per burger",
-        nutrients: "Protein, Fat, Carbs",
-        benefits: "High protein but high fat",
-        bestTime: "Occasionally",
-        category: "Junk"
-    },
-    "dosa": {
-        calories: "133 kcal per dosa",
-        nutrients: "Carbs, Protein",
-        benefits: "Light, easy to digest",
-        bestTime: "Breakfast",
-        category: "Healthy"
+        calories: "295 kcal",
+        nutrients: "Protein, Carbs, Fat",
+        benefits: "Easy energy but high fat",
+        bestTime: "Rarely",
+        category: "Junk Food"
     },
     "idli": {
-        calories: "58 kcal per idli",
-        nutrients: "Protein, Carbohydrates",
-        benefits: "Very light, good for digestion",
-        bestTime: "Breakfast",
+        calories: "58 kcal",
+        nutrients: "Carbs, Protein",
+        benefits: "Light on stomach, good breakfast",
+        bestTime: "Morning",
         category: "Healthy"
-    }
-};
-
-
-// Function to classify image
-function classifyImage() {
-    const fileInput = document.getElementById("fileInput");
-    const preview = document.getElementById("preview");
-
-    if (fileInput.files.length === 0) {
-        alert("Please upload an image.");
-        return;
-    }
-
-    // Show preview
-    const file = fileInput.files[0];
-    preview.src = URL.createObjectURL(file);
-
-    // Guess name from file name
-    let fileName = file.name.toLowerCase();
-
-    let detectedFood = "not found";
-
-    for (let food in foodData) {
-        if (fileName.includes(food)) {
-            detectedFood = food;
-            break;
-        }
-    }
-
-    // Update UI
-    const result = document.getElementById("result");
-
-    if (detectedFood !== "not found") {
-        const info = foodData[detectedFood];
-        result.innerHTML = `
-            <strong>Food Name:</strong> ${detectedFood}<br><br>
-            <strong>Calories:</strong> ${info.calories}<br><br>
-            <strong>Nutrients:</strong> ${info.nutrients}<br><br>
-            <strong>Benefits:</strong> ${info.benefits}<br><br>
-            <strong>Best Time to Eat:</strong> ${info.bestTime}<br><br>
-            <strong>Category:</strong> ${info.category}
-        `;
-    } else {
-        result.innerHTML = `
-            <strong>Food Name:</strong> Not in database<br><br>
-            <strong>Calories:</strong> —<br><br>
-            <strong>Nutrients:</strong> —<br><br>
-            <strong>Benefits:</strong> —<br><br>
-            <strong>Best Time to Eat:</strong> —<br><br>
-            <strong>Category:</strong> —
-        `;
-    }
-}
+    },
+    "noodles": {
+        calories: "138 kcal per cup",
+        nutrients: "Carbs",
+        benefits: "Quick meal",
+        bestTime: "Sometimes",
+        category: "Junk Food"
+    },
+    "egg": {
+        calories: "78 kcal",
+        nutrients: "Protein, B12, Iron",
+        benefits: "Builds muscle, good nutrition",
+        bestTime: "Morning",
+        category: "Healthy"
+    },
+    "milk": {
+        calories: "42 kcal per 100ml",
+        nutrients: "Calcium, Vitamin D",
+        benefits: "Strong bones",
+        bestTime: "Morning or night",
+        category: "Healthy"
+    },
+    "mango": {
+        calories: "60 kcal",
+        nutrients: "Vitamin C, Fiber",
+        benefits: "Boost immunity",
+        bestTime: "Afternoon",
+        category: "Healthy"
+    },
+    "gr
