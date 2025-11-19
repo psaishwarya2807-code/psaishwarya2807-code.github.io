@@ -1,97 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Classifier</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 40px;
-            background: #f0f0f0;
-        }
-        #container {
-            background: white;
-            width: 90%;
-            max-width: 400px;
-            padding: 20px;
-            margin: auto;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        #preview {
-            width: 100%;
-            margin-top: 15px;
-            display: none;
-        }
-        h2 {
-            color: #333;
-        }
-    </style>
 </head>
-
 <body>
+    <h1>Food Classifier</h1>
 
-    <h2>Food Classifier</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="classifyImage()">Classify</button>
 
-    <div id="container">
-        <input type="file" id="imageUpload" accept="image/*" />
+    <p id="result"></p>
 
-        <img id="preview" src="" />
-
-        <div id="result"></div>
-        <div id="extra-info"></div>
-    </div>
-
-    <!-- Handle image upload + preview -->
-    <script>
-        document.getElementById("imageUpload").onchange = function(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function() {
-                const img = document.getElementById("preview");
-                img.src = reader.result;
-                img.style.display = "block";
-
-                classifyFood();
-            };
-
-            reader.readAsDataURL(file);
-        };
-    </script>
-
-    <!-- TensorFlow JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.9.0"></script>
-
-    <!-- Classifier code -->
-    <script>
-        async function classifyFood() {
-            const img = document.getElementById("preview");
-
-            // Load MobileNet model
-            const model = await tf.loadLayersModel(
-                "https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v2_140_224/classification/3/default/1",
-                { fromTFHub: true }
-            );
-
-            const processed = tf.browser.fromPixels(img)
-                .resizeNearestNeighbor([224, 224])
-                .toFloat()
-                .expandDims();
-
-            const prediction = model.predict(processed);
-            const resultIndex = prediction.argMax(-1).dataSync()[0];
-
-            document.getElementById("result").innerText =
-                "Prediction ID: " + resultIndex;
-
-            document.getElementById("extra-info").innerText =
-                "More details coming soon!";
-        }
-    </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
