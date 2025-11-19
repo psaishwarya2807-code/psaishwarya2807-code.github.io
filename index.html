@@ -1,40 +1,60 @@
-            benefits: "Tasty but unhealthy",
-            bestTime: "Avoid daily"
-        },
-        "orange": {
-            healthy: "Healthy",
-            calories: "62 kcal",
-            nutrients: "Vitamin C, Fiber, Potassium",
-            benefits: "Boosts immunity, good for skin",
-            bestTime: "Morning"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Classifier</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
         }
-    };
-
-    async function classifyImage() {
-        const result = document.getElementById("result");
-        const info = document.getElementById("extraInfo");
-
-        result.textContent = "Classifying...";
-        info.textContent = "";
-
-        const img = document.getElementById("previewImage");
-        const prediction = await model.classify(img);
-
-        const detected = prediction[0].className.toLowerCase();
-        result.textContent = "Detected: " + prediction[0].className;
-
-        let key = Object.keys(foodInfo).find(food => detected.includes(food));
-
-        if (key) {
-            const f = foodInfo[key];
-            info.innerHTML =
-                `<br>🍽️ <b>Type: </b> ${f.healthy}
-                <br>🔥 <b>Calories: </b> ${f.calories}
-                <br>🍊 <b>Nutrients: </b> ${f.nutrients}
-                <br>💪 <b>Benefits: </b> ${f.benefits}
-                <br>⏰ <b>Best Time: </b> ${f.bestTime}`;
-        } else {
-            info.textContent = "Food details not in database.";
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 400px;
+            margin: auto;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
         }
-    }
-</script>
+        img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        #resultBox {
+            text-align: left;
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>AI Food Classifier</h1>
+
+    <div class="container">
+        <input type="file" id="fileInput" accept="image/*"><br>
+
+        <img id="preview" src="" alt="">
+
+        <div id="resultBox">
+            <p><strong>Food Name:</strong> <span id="foodName">—</span></p>
+            <p><strong>Calories:</strong> <span id="calories">—</span></p>
+            <p><strong>Nutrients:</strong> <span id="nutrients">—</span></p>
+            <p><strong>Benefits:</strong> <span id="benefits">—</span></p>
+            <p><strong>Best Time to Eat:</strong> <span id="time">—</span></p>
+            <p><strong>Category:</strong> <span id="category">—</span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
