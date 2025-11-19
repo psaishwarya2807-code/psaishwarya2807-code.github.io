@@ -1,59 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Food Classifier — Info Assistant</title>
+
+<!-- TensorFlow + MobileNet -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+
+<style>
+  body { font-family: Arial, sans-serif; background:#f6f7fb; margin:0; padding:24px; display:flex; justify-content:center; }
+  .card { width:100%; max-width:760px; background:#fff; border-radius:12px; box-shadow:0 8px 30px rgba(15,15,30,0.06); padding:20px; }
+  h1 { margin:0 0 10px 0; font-size:22px; }
+  .controls { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:12px; }
+  input[type=file] { padding:8px; }
+  button { background:#2563eb; color:#fff; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; }
+  button:disabled { opacity:0.5; cursor:not-allowed; }
+  #previewImage { width:260px; max-width:100%; border-radius:10px; display:none; margin-top:18px; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+  .result { margin-top:18px; display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+  .info { flex:1 1 380px; }
+  .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:#eef2ff; color:#3730a3; font-weight:600; margin-bottom:8px; }
+  .title { font-size:18px; margin:0 0 6px 0; }
+  .confidence { color:#6b7280; font-size:13px; margin-top:4px; }
+  .meta { font-size:15px; margin-top:10px; }
+  .row { margin:8px 0; }
+  .label { font-weight:700; }
+  .alt { margin-top:10px; padding:12px; background:#f8fafc; border-radius:8px; }
+  pre { background:#0f172a; color:#fff; padding:12px; border-radius:8px; overflow:auto; font-size:13px; }
+  footer { margin-top:18px; color:#6b7280; font-size:13px; }
+  @media (max-width:600px){ .result { flex-direction:column; } }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Food Classifier — Show nutrition & tips</h1>
+
+  <div class="controls">
+    <input id="imageUpload" type="file" accept="image/*">
+    <button id="classifyBtn" onclick="classifyImage()" disabled>Classify</button>
+    <div id="loadingMsg" style="color:#6b7280;font-size:14px;margin-left:6px;">Model loading…</div>
+  </div>
+
+  <img id="previewImage" alt="Preview">
+
+  <div class="result" id="resultArea" style="display:none;">
+    <div class="info">
+      <div class="badge" id="categoryBadge">—</div>
+      <h3 class="title" id="detectedName">Detected: —</h3>
+      <div class="confidence" id="confidence">Confidence: —</div>
+
+      <div class="meta">
+        <div class="row"><span class="label">Calories:</span> <span id="calories">—</span></div>
+        <div class="row"><span class="label">Key nutrients:</span> <span id="nutrients">—</span></div>
+        <div class="row"><span class="label">Benefits:</span> <span id="benefits">—</span></div>
+        <div class="row"><span class="label">Best time to eat:</span> <span id="bestTime">—</span></div>
+
+        <div class="alt">
+          <div class="label">Healthy alternative:</div>
+          <div id="alternative">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:0 0 300px;">
+      <div style="font-weight:700;margin-bottom:8px">Raw prediction JSON</div>
+      <pre id="rawPred">—</pre>
+    </div>
+  </div>
+
+  <footer>Tip: If detection is wrong, try a clearer photo or crop close to the food.</footer>
+</div>
+
 <script>
-    let model;
+/*
+  Food metadata database: add or edit entries here.
+  Keys are keywords checked against MobileNet label (lowercased).
+*/
+const FOOD_DB = [
+  {
+    keys: ["banana"],
+    name: "Banana",
+    category: "Healthy",
+    calories: "≈ 105 kcal (medium)",
+    nutrients: "Potassium, Vitamin B6, Vitamin C, Fiber",
+    benefits: "Quick energy, supports digestion, potassium for muscles",
+    best_time: "Morning/Afternoon",
+    alternative: "Apple or Greek yogurt"
+  },
+  {
+    keys: ["apple"],
+    name: "Apple",
+    category: "Healthy",
+    calories: "≈ 95 kcal (medium)",
+    nutrients: "Fiber, Vitamin C, Antioxidants",
+    benefits: "Good for digestion, heart health",
+    best_time: "Morning",
+    alternative: "Pear or an orange"
+  },
+  {
+    keys: ["orange"],
+    name: "Orange",
+    category: "Healthy",
+    calories: "≈ 62 kcal (medium)",
+    nutrients: "Vitamin C, Fiber, Folate",
+    benefits: "Supports immunity, hydration",
+    best_time: "Morning",
+    alternative: "Grapefruit or a citrus salad"
+  },
+  {
+    keys: ["pizza"],
+    name: "Pizza",
+    category: "Junk",
+    calories: "≈ 250–350 kcal per slice (depends)",
+    nutrients: "Carbs, fats, protein (varies)",
+    benefits: "Tasty, convenient — not nutrient-dense",
+    best_time: "Occasional (not daily)",
+    alternative: "Homemade veggie flatbread or salad with lean protein"
+  },
+  {
+    keys: ["burger", "hamburger"],
+    name: "Burger",
+    category: "Junk",
+    calories: "≈ 300–600 kcal (varies)",
+    nutrients: "Protein, fats, carbs",
+    benefits: "Protein source, but can be high in saturated fat",
+    best_time: "Occasional",
+    alternative: "Grilled chicken sandwich or veggie burger"
+  },
+  {
+    keys: ["samosa"],
+    name: "Samosa",
+    category: "Junk",
+    calories: "≈ 150–300 kcal (each, varies)",
+    nutrients: "Carbs, fats",
+    benefits: "Tasty snack; high in oil and carbs",
+    best_time: "Occasional",
+    alternative: "Baked samosa or roasted chickpeas"
+  },
+  {
+    keys: ["dosa"],
+    name: "Dosa",
+    category: "Healthy",
+    calories: "≈ 120–180 kcal (depends on size)",
+    nutrients: "Carbs, protein (if with dal), some B vitamins",
+    benefits: "Light, good breakfast when paired with sambar",
+    best_time: "Morning",
+    alternative: "Idli with sambar"
+  },
+  {
+    keys: ["idli"],
+    name: "Idli",
+    category: "Healthy",
+    calories: "≈ 39 kcal per idli",
+    nutrients: "Carbs, protein, low fat",
+    benefits: "Easily digestible, good breakfast",
+    best_time: "Morning",
+    alternative: "Steamed dhokla"
+  },
+  {
+    keys: ["biryani"],
+    name: "Biryani",
+    category: "Junk",
+    calories: "≈ 500–700 kcal (per plate)",
+    nutrients: "Carbs, fats, protein (depends on meat)",
+    benefits: "Satisfying meal; high calories",
+    best_time: "Occasional (avoid before sleep)",
+    alternative: "Steamed rice with vegetable curry"
+  },
+  {
+    keys: ["french fries", "fries", "potato chips", "chips"],
+    name: "Fried Potato / Chips",
+    category: "Junk",
+    calories: "≈ 312 kcal per 100 g (fries vary)",
+    nutrients: "Carbs, fats, sodium",
+    benefits: "Tasty snack; high salt & fat",
+    best_time: "Occasional",
+    alternative: "Baked potato wedges, roasted nuts"
+  }
+];
 
-    async function loadModel() {
-        try {
-            model = await mobilenet.load();
-            console.log("Model loaded");
-        } catch (error) {
-            console.error("Model loading failed:", error);
-        }
+/* Helpers */
+function findFoodInfo(predName) {
+  const label = predName.toLowerCase();
+  for (const entry of FOOD_DB) {
+    for (const key of entry.keys) {
+      if (label.includes(key)) return entry;
+    }
+  }
+  return null;
+}
+
+/* UI elements */
+const imageUpload = document.getElementById("imageUpload");
+const classifyBtn = document.getElementById("classifyBtn");
+const loadingMsg = document.getElementById("loadingMsg");
+const previewImage = document.getElementById("previewImage");
+const resultArea = document.getElementById("resultArea");
+const detectedName = document.getElementById("detectedName");
+const confidenceEl = document.getElementById("confidence");
+const caloriesEl = document.getElementById("calories");
+const nutrientsEl = document.getElementById("nutrients");
+const benefitsEl = document.getElementById("benefits");
+const bestTimeEl = document.getElementById("bestTime");
+const alternativeEl = document.getElementById("alternative");
+const rawPred = document.getElementById("rawPred");
+const categoryBadge = document.getElementById("categoryBadge");
+
+let model = null;
+
+/* Load MobileNet */
+async function loadModel() {
+  try {
+    model = await mobilenet.load();
+    loadingMsg.textContent = "Model loaded ✓";
+    classifyBtn.disabled = false;
+  } catch (e) {
+    loadingMsg.textContent = "Model load failed — check console";
+    console.error("Model load failed", e);
+  }
+}
+loadModel();
+
+/* When user picks an image, show preview */
+imageUpload.addEventListener("change", () => {
+  const file = imageUpload.files[0];
+  if (!file) return;
+  previewImage.src = URL.createObjectURL(file);
+  previewImage.style.display = "block";
+  resultArea.style.display = "none";
+});
+
+/* Main classify action */
+async function classifyImage() {
+  if (!model) {
+    alert("Model not ready yet. Wait a moment and try again.");
+    return;
+  }
+  if (!previewImage.src) {
+    alert("Please upload an image first.");
+    return;
+  }
+
+  // show progress
+  detectedName.textContent = "Detecting…";
+  confidenceEl.textContent = "";
+  caloriesEl.textContent = "—";
+  nutrientsEl.textContent = "—";
+  benefitsEl.textContent = "—";
+  bestTimeEl.textContent = "—";
+  alternativeEl.textContent = "—";
+  categoryBadge.textContent = "Detecting…";
+  resultArea.style.display = "flex";
+
+  try {
+    const predictions = await model.classify(previewImage);
+    rawPred.textContent = JSON.stringify(predictions, null, 2);
+
+    if (!predictions || predictions.length === 0) {
+      detectedName.textContent = "No prediction";
+      categoryBadge.textContent = "—";
+      return;
     }
 
-    loadModel();
+    const top = predictions[0];
+    const name = top.className;
+    const conf = (top.probability * 100).toFixed(2) + "%";
 
-    document.getElementById("imageUpload").addEventListener("change", () => {
-        const file = document.getElementById("imageUpload").files[0];
-        const preview = document.getElementById("previewImage");
+    detectedName.textContent = "Detected: " + name;
+    confidenceEl.textContent = "Confidence: " + conf;
 
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = "block";
-    });
-
-    async function classifyImage() {
-        const resultText = document.getElementById("result");
-        const extra = document.getElementById("extraInfo");
-
-        resultText.textContent = "Classifying...";
-        extra.textContent = "";
-
-        try {
-            const img = document.getElementById("previewImage");
-
-            const prediction = await model.classify(img);
-            const item = prediction[0].className.toLowerCase();
-
-            resultText.textContent = "Detected: " + prediction[0].className;
-
-            let info = "";
-
-            if (item.includes("banana")) {
-                info = "🍌 Healthy Food | Best time: Afternoon";
-            } else if (item.includes("apple")) {
-                info = "🍎 Healthy Food | Best time: Morning";
-            } else if (item.includes("pizza")) {
-                info = "🍕 Junk Food | Best time: Avoid daily";
-            } else if (item.includes("orange")) {
-                info = "🍊 Healthy Food | Best time: Morning";
-            } else {
-                info = "Food details not in database.";
-            }
-
-            extra.textContent = info;
-
-        } catch (error) {
-            resultText.textContent = "Error Classifying!";
-            console.error(error);
-        }
+    // find metadata
+    const info = findFoodInfo(name);
+    if (info) {
+      categoryBadge.textContent = info.category;
+      caloriesEl.textContent = info.calories;
+      nutrientsEl.textContent = info.nutrients;
+      benefitsEl.textContent = info.benefits;
+      bestTimeEl.textContent = info.best_time || info.bestTime || info.best_time;
+      alternativeEl.textContent = info.alternative;
+    } else {
+      categoryBadge.textContent = "Unknown";
+      caloriesEl.textContent = "Not available";
+      nutrientsEl.textContent = "Not available";
+      benefitsEl.textContent = "Not available";
+      bestTimeEl.textContent = "Not available";
+      alternativeEl.textContent = "Try a healthy alternative like fruit or salad";
     }
+  } catch (err) {
+    console.error("Classification error:", err);
+    detectedName.textContent = "Error classifying";
+    categoryBadge.textContent = "—";
+    rawPred.textContent = String(err);
+  }
+}
 </script>
+
+</body>
+</html>
