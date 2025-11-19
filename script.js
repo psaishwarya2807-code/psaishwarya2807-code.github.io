@@ -1,80 +1,104 @@
 // Food Database
-const foodDatabase = {
+const foodData = {
     "banana": {
-        calories: "105 kcal",
+        calories: "105 kcal per 100g",
         nutrients: "Potassium, Vitamin B6, Vitamin C, Fiber",
-        benefits: "Boosts energy, improves digestion, good for heart health",
-        bestTime: "Morning or before workout",
+        benefits: "Boosts energy, improves digestion, supports heart health",
+        bestTime: "Morning or afternoon",
         category: "Healthy"
     },
-
     "apple": {
-        calories: "95 kcal",
-        nutrients: "Fiber, Vitamin C, Potassium",
-        benefits: "Good for heart, controls blood sugar, rich in antioxidants",
+        calories: "52 kcal per 100g",
+        nutrients: "Vitamin C, Fiber, Antioxidants",
+        benefits: "Good for heart, digestion, and immunity",
+        bestTime: "Any time of day",
+        category: "Healthy"
+    },
+    "orange": {
+        calories: "47 kcal per 100g",
+        nutrients: "Vitamin C, Folate, Potassium",
+        benefits: "Boosts immunity, good for skin, helps hydration",
         bestTime: "Morning",
         category: "Healthy"
     },
-
-    "burger": {
-        calories: "295–500 kcal (depends on size)",
-        nutrients: "Protein, Carbs, Fats",
-        benefits: "High energy food",
-        bestTime: "Occasionally, not daily",
+    "pizza": {
+        calories: "266 kcal per slice",
+        nutrients: "Carbs, Fat, Sodium",
+        benefits: "Tasty but not nutritious",
+        bestTime: "Occasionally",
         category: "Junk"
+    },
+    "burger": {
+        calories: "295 kcal per burger",
+        nutrients: "Protein, Fat, Carbs",
+        benefits: "High protein but high fat",
+        bestTime: "Occasionally",
+        category: "Junk"
+    },
+    "dosa": {
+        calories: "133 kcal per dosa",
+        nutrients: "Carbs, Protein",
+        benefits: "Light, easy to digest",
+        bestTime: "Breakfast",
+        category: "Healthy"
+    },
+    "idli": {
+        calories: "58 kcal per idli",
+        nutrients: "Protein, Carbohydrates",
+        benefits: "Very light, good for digestion",
+        bestTime: "Breakfast",
+        category: "Healthy"
     }
 };
 
 
-// MAIN FUNCTION
-function classifyFood(foodName) {
-    foodName = foodName.toLowerCase();
+// Function to classify image
+function classifyImage() {
+    const fileInput = document.getElementById("fileInput");
+    const preview = document.getElementById("preview");
 
-    if (foodDatabase[foodName]) {
-        return foodDatabase[foodName];
+    if (fileInput.files.length === 0) {
+        alert("Please upload an image.");
+        return;
     }
 
-    return {
-        calories: "—",
-        nutrients: "—",
-        benefits: "—",
-        bestTime: "—",
-        category: "—"
-    };
-}
+    // Show preview
+    const file = fileInput.files[0];
+    preview.src = URL.createObjectURL(file);
 
+    // Guess name from file name
+    let fileName = file.name.toLowerCase();
 
-// Image to food name — Simple keyword match for now
-function identifyFoodByImage(fileName) {
-    fileName = fileName.toLowerCase();
+    let detectedFood = "not found";
 
-    if (fileName.includes("banana")) return "banana";
-    if (fileName.includes("apple")) return "apple";
-    if (fileName.includes("burger")) return "burger";
+    for (let food in foodData) {
+        if (fileName.includes(food)) {
+            detectedFood = food;
+            break;
+        }
+    }
 
-    return "Not in database";
-}
+    // Update UI
+    const result = document.getElementById("result");
 
-
-// Image Preview & Classification
-document.getElementById("fileInput").addEventListener("change", function (event) {
-    const file = event.target.files[0];
-    const preview = document.getElementById("preview");
-    const resultBox = document.getElementById("result");
-
-    if (file) {
-        preview.src = URL.createObjectURL(file);
-
-        const identifiedFood = identifyFoodByImage(file.name);
-        const foodInfo = classifyFood(identifiedFood);
-
-        resultBox.innerHTML = `
-            <b>Food Name:</b> ${identifiedFood}<br><br>
-            <b>Calories:</b> ${foodInfo.calories}<br>
-            <b>Nutrients:</b> ${foodInfo.nutrients}<br>
-            <b>Benefits:</b> ${foodInfo.benefits}<br>
-            <b>Best Time to Eat:</b> ${foodInfo.bestTime}<br>
-            <b>Category:</b> ${foodInfo.category}
+    if (detectedFood !== "not found") {
+        const info = foodData[detectedFood];
+        result.innerHTML = `
+            <strong>Food Name:</strong> ${detectedFood}<br><br>
+            <strong>Calories:</strong> ${info.calories}<br><br>
+            <strong>Nutrients:</strong> ${info.nutrients}<br><br>
+            <strong>Benefits:</strong> ${info.benefits}<br><br>
+            <strong>Best Time to Eat:</strong> ${info.bestTime}<br><br>
+            <strong>Category:</strong> ${info.category}
+        `;
+    } else {
+        result.innerHTML = `
+            <strong>Food Name:</strong> Not in database<br><br>
+            <strong>Calories:</strong> —<br><br>
+            <strong>Nutrients:</strong> —<br><br>
+            <strong>Benefits:</strong> —<br><br>
+            <strong>Best Time to Eat:</strong> —<br><br>
+            <strong>Category:</strong> —
         `;
     }
-});
+}
