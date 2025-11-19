@@ -1,62 +1,80 @@
-document.getElementById("fileInput").addEventListener("change", function () {
-    let file = this.files[0];
-    if (!file) return;
+// Food Database
+const foodDatabase = {
+    "banana": {
+        calories: "105 kcal",
+        nutrients: "Potassium, Vitamin B6, Vitamin C, Fiber",
+        benefits: "Boosts energy, improves digestion, good for heart health",
+        bestTime: "Morning or before workout",
+        category: "Healthy"
+    },
 
-    // Show preview
-    let reader = new FileReader();
-    reader.onload = function (e) {
-        document.getElementById("preview").src = e.target.result;
+    "apple": {
+        calories: "95 kcal",
+        nutrients: "Fiber, Vitamin C, Potassium",
+        benefits: "Good for heart, controls blood sugar, rich in antioxidants",
+        bestTime: "Morning",
+        category: "Healthy"
+    },
+
+    "burger": {
+        calories: "295–500 kcal (depends on size)",
+        nutrients: "Protein, Carbs, Fats",
+        benefits: "High energy food",
+        bestTime: "Occasionally, not daily",
+        category: "Junk"
+    }
+};
+
+
+// MAIN FUNCTION
+function classifyFood(foodName) {
+    foodName = foodName.toLowerCase();
+
+    if (foodDatabase[foodName]) {
+        return foodDatabase[foodName];
+    }
+
+    return {
+        calories: "—",
+        nutrients: "—",
+        benefits: "—",
+        bestTime: "—",
+        category: "—"
     };
-    reader.readAsDataURL(file);
+}
 
-    // ------ Food Info Database ------
-    let foods = {
-        "banana": {
-            calories: "105 kcal",
-            nutrients: "Potassium, Vitamin C, Fiber",
-            benefits: "Boosts energy, good for digestion",
-            time: "Morning or afternoon",
-            category: "Healthy"
-        },
-        "apple": {
-            calories: "95 kcal",
-            nutrients: "Fiber, Vitamin C, Antioxidants",
-            benefits: "Improves heart health, aids digestion",
-            time: "Morning",
-            category: "Healthy"
-        },
-        "pizza": {
-            calories: "266 kcal per slice",
-            nutrients: "Carbs, fats, protein",
-            benefits: "Good for cravings",
-            time: "Lunch or evening",
-            category: "Junk"
-        }
-    };
 
-    // ------ Predict Food Name (simple keyword match) ------
-    let predicted = "Unknown Food";
+// Image to food name — Simple keyword match for now
+function identifyFoodByImage(fileName) {
+    fileName = fileName.toLowerCase();
 
-    Object.keys(foods).forEach(food => {
-        if (file.name.toLowerCase().includes(food)) {
-            predicted = food;
-        }
-    });
+    if (fileName.includes("banana")) return "banana";
+    if (fileName.includes("apple")) return "apple";
+    if (fileName.includes("burger")) return "burger";
 
-    // ------ Display Result ------
-    if (foods[predicted]) {
-        document.getElementById("foodName").innerText = predicted;
-        document.getElementById("calories").innerText = foods[predicted].calories;
-        document.getElementById("nutrients").innerText = foods[predicted].nutrients;
-        document.getElementById("benefits").innerText = foods[predicted].benefits;
-        document.getElementById("time").innerText = foods[predicted].time;
-        document.getElementById("category").innerText = foods[predicted].category;
-    } else {
-        document.getElementById("foodName").innerText = "Not in database";
-        document.getElementById("calories").innerText = "—";
-        document.getElementById("nutrients").innerText = "—";
-        document.getElementById("benefits").innerText = "—";
-        document.getElementById("time").innerText = "—";
-        document.getElementById("category").innerText = "—";
+    return "Not in database";
+}
+
+
+// Image Preview & Classification
+document.getElementById("fileInput").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("preview");
+    const resultBox = document.getElementById("result");
+
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+
+        const identifiedFood = identifyFoodByImage(file.name);
+        const foodInfo = classifyFood(identifiedFood);
+
+        resultBox.innerHTML = `
+            <b>Food Name:</b> ${identifiedFood}<br><br>
+            <b>Calories:</b> ${foodInfo.calories}<br>
+            <b>Nutrients:</b> ${foodInfo.nutrients}<br>
+            <b>Benefits:</b> ${foodInfo.benefits}<br>
+            <b>Best Time to Eat:</b> ${foodInfo.bestTime}<br>
+            <b>Category:</b> ${foodInfo.category}
+        `;
     }
 });
