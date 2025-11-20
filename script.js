@@ -1,7 +1,8 @@
 //
 // -------------------------------
-// FOOD DATABASE
+//   FOOD DATABASE
 // -------------------------------
+//
 
 const FOOD_DATA = {
     "orange juice": {
@@ -33,89 +34,67 @@ const FOOD_DATA = {
 
     "burger": {
         foodName: "Burger",
-        calories: "350-600 kcal",
-        nutrients: "Protein, Fat",
+        calories: "350–600 kcal",
+        nutrients: "Protein, Fat, Carbs",
         benefits: "High energy",
-        bestTime: "Lunch",
-        category: "Junk Food"
-    },
-
-    "pizza": {
-        foodName: "Pizza",
-        calories: "250-400 kcal per slice",
-        nutrients: "Carbs, Fat, Protein",
-        benefits: "High energy",
-        bestTime: "Evening",
+        bestTime: "Occasional Treat",
         category: "Junk Food"
     }
 };
 
-
 //
 // -------------------------------
-// SELECT HTML ELEMENTS
+//   IMAGE UPLOAD + PREVIEW
 // -------------------------------
-
-const fileInput = document.getElementById("imageUpload");
-const previewImg = document.getElementById("previewImg");
-
-const foodNameEl = document.getElementById("foodName");
-const caloriesEl = document.getElementById("calories");
-const nutrientsEl = document.getElementById("nutrients");
-const benefitsEl = document.getElementById("benefits");
-const bestTimeEl = document.getElementById("bestTime");
-const categoryEl = document.getElementById("category");
-
-
 //
-// -------------------------------
-// HELPER FUNCTIONS
-// -------------------------------
 
-function showData(data) {
-    foodNameEl.textContent = data.foodName;
-    caloriesEl.textContent = data.calories;
-    nutrientsEl.textContent = data.nutrients;
-    benefitsEl.textContent = data.benefits;
-    bestTimeEl.textContent = data.bestTime;
-    categoryEl.textContent = data.category;
-}
+const imageInput = document.getElementById("imageUpload");
+const previewImage = document.getElementById("previewImage");
+const resultBox = document.getElementById("resultBox");
 
-function showNotFound() {
-    foodNameEl.textContent = "Not found";
-    caloriesEl.textContent = "_";
-    nutrientsEl.textContent = "_";
-    benefitsEl.textContent = "_";
-    bestTimeEl.textContent = "_";
-    categoryEl.textContent = "_";
-}
+// When user selects image
+imageInput.addEventListener("change", function () {
+    const file = this.files[0];
 
-//
-// -------------------------------
-// MAIN DETECTION LOGIC
-// -------------------------------
+    if (file) {
+        const reader = new FileReader();
 
-fileInput.addEventListener("change", (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+        reader.addEventListener("load", function () {
+            previewImage.src = reader.result;
+            previewImage.style.display = "block";
 
-    // Show image preview
-    previewImg.src = URL.createObjectURL(file);
+            // Simulate automatic food detection
+            detectFood();
+        });
 
-    const imgName = file.name.toLowerCase();
-
-    let matchedFood = null;
-
-    for (let key in FOOD_DATA) {
-        if (imgName.includes(key)) {
-            matchedFood = FOOD_DATA[key];
-            break;
-        }
-    }
-
-    if (matchedFood) {
-        showData(matchedFood);
-    } else {
-        showNotFound();
+        reader.readAsDataURL(file);
     }
 });
+
+//
+// -------------------------------
+//   FOOD DETECTION LOGIC
+// -------------------------------
+//
+
+// Simple keyword matching for now
+function detectFood() {
+    let fileName = imageInput.files[0].name.toLowerCase();
+
+    let detectedFood = null;
+
+    Object.keys(FOOD_DATA).forEach(food => {
+        if (fileName.includes(food)) {
+            detectedFood = FOOD_DATA[food];
+        }
+    });
+
+    if (!detectedFood) {
+        resultBox.style.display = "block";
+        document.getElementById("foodName").innerText = "Unknown Food";
+        document.getElementById("calories").innerText = "-";
+        document.getElementById("nutrients").innerText = "-";
+        document.getElementById("benefits").innerText = "-";
+        document.getElementById("bestTime").innerText = "-";
+        document.getElementById("category").innerText = "-";
+        return;
