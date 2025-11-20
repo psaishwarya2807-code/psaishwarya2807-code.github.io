@@ -1,104 +1,107 @@
-const foods = {
+// Food database (20+ items)
+const foodDB = {
     "apple": {
         type: "Healthy",
-        ingredients: "Apple fruit",
-        benefits: "High fiber, boosts immunity",
-        bestTime: "Morning"
+        ingredients: "Apple",
+        benefits: "Rich in fiber & vitamins. Good for digestion.",
+        bestTime: "Morning or evening"
     },
     "banana": {
         type: "Healthy",
-        ingredients: "Banana fruit",
-        benefits: "Energy boost, good for digestion",
-        bestTime: "Morning / Evening"
+        ingredients: "Banana",
+        benefits: "Boosts energy, rich in potassium.",
+        bestTime: "Morning before breakfast"
+    },
+    "pizza": {
+        type: "Junk",
+        ingredients: "Cheese, refined flour, sauce, toppings",
+        benefits: "Tasty but high in calories.",
+        bestTime: "Lunch (occasionally)"
+    },
+    "burger": {
+        type: "Junk",
+        ingredients: "Bread, patty, cheese",
+        benefits: "Rich in protein but high in fats.",
+        bestTime: "Lunch"
+    },
+    "dosa": {
+        type: "Healthy",
+        ingredients: "Rice, dal",
+        benefits: "Good carbs & protein.",
+        bestTime: "Breakfast"
     },
     "idli": {
         type: "Healthy",
         ingredients: "Rice, urad dal",
-        benefits: "Light, easily digestible",
+        benefits: "Very healthy, great for digestion.",
         bestTime: "Breakfast"
     },
-    "dosa": {
+    "samosa": {
+        type: "Junk",
+        ingredients: "Potato, maida, oil",
+        benefits: "Tasty but oily.",
+        bestTime: "Evening snack"
+    },
+    "rice": {
         type: "Healthy",
-        ingredients: "Rice, lentils",
-        benefits: "Good carbs and protein",
-        bestTime: "Breakfast"
+        ingredients: "Rice",
+        benefits: "Good carbs for energy.",
+        bestTime: "Lunch"
     },
-    "utappa": {
+    "chapati": {
         type: "Healthy",
-        ingredients: "Rice, lentils, vegetables",
-        benefits: "Nutritious and filling",
-        bestTime: "Breakfast"
+        ingredients: "Wheat flour",
+        benefits: "Good fiber & nutrients.",
+        bestTime: "Lunch or dinner"
     },
-    "biryani": {
-        type: "Junk",
-        ingredients: "Rice, meat, oil, spices",
-        benefits: "Very tasty but heavy",
-        bestTime: "Lunch (occasionally)"
-    },
-    "pizza": {
-        type: "Junk",
-        ingredients: "Cheese, bread, sauce",
-        benefits: "Tasty but high calories",
-        bestTime: "Occasionally"
-    },
-    "burger": {
-        type: "Junk",
-        ingredients: "Bread, patty, sauces",
-        benefits: "Delicious but high fat",
-        bestTime: "Occasionally"
-    },
-    "noodles": {
-        type: "Junk",
-        ingredients: "Maida, oil, seasoning",
-        benefits: "Quick to make, tastes good",
-        bestTime: "Rarely"
-    },
-    "cake": {
-        type: "Junk",
-        ingredients: "Sugar, flour, cream",
-        benefits: "Celebration food",
-        bestTime: "Occasional treat"
-    },
-    "icecream": {
-        type: "Junk",
-        ingredients: "Milk, sugar, flavours",
-        benefits: "Cooling and tasty",
-        bestTime: "Afternoon"
+    "chicken": {
+        type: "Healthy",
+        ingredients: "Chicken",
+        benefits: "High protein, muscle building.",
+        bestTime: "Lunch"
     }
 };
 
-document.getElementById("imageUpload").addEventListener("change", function () {
-    const file = this.files[0];
+// Simple AI-like fake classifier (matches keywords)
+function identifyFood(fileName) {
+    fileName = fileName.toLowerCase();
+
+    for (let food in foodDB) {
+        if (fileName.includes(food)) {
+            return food;
+        }
+    }
+    return null;
+}
+
+// When user uploads image
+document.getElementById("imageInput").addEventListener("change", function(event) {
+    let file = event.target.files[0];
     if (!file) return;
 
-    const preview = document.getElementById("preview");
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
+    // Show preview
+    let img = document.getElementById("preview");
+    img.src = URL.createObjectURL(file);
+    img.style.display = "block";
 
-    let name = file.name.toLowerCase();
-    let foundFood = null;
+    // Identify food
+    let foodName = identifyFood(file.name);
+    let box = document.getElementById("results");
 
-    Object.keys(foods).forEach(food => {
-        if (name.includes(food)) {
-            foundFood = food;
-        }
-    });
-
-    if (!foundFood) {
-        document.getElementById("result").innerHTML = `
-            <p><b>Food Detected:</b> Unknown</p>
-            <p>Please upload a clearer image.</p>
-        `;
+    if (!foodName) {
+        box.style.display = "block";
+        box.innerHTML = "<h3>Unknown Food</h3><p>Try uploading a clear food picture.</p>";
         return;
     }
 
-    const item = foods[foundFood];
+    let data = foodDB[foodName];
 
-    document.getElementById("result").innerHTML = `
-        <span class="tag ${item.type.toLowerCase()}">${item.type}</span>
-        <p><b>Food:</b> ${foundFood}</p>
-        <p><b>Ingredients:</b> ${item.ingredients}</p>
-        <p><b>Benefits:</b> ${item.benefits}</p>
-        <p><b>Best Time to Eat:</b> ${item.bestTime}</p>
+    box.style.display = "block";
+    box.innerHTML = `
+        <h2>${foodName.toUpperCase()}</h2>
+        <p><b>Type:</b> ${data.type}</p>
+        <p><b>Ingredients:</b> ${data.ingredients}</p>
+        <p><b>Benefits:</b> ${data.benefits}</p>
+        <p><b>Best Time to Eat:</b> ${data.bestTime}</p>
     `;
 });
