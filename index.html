@@ -1,51 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Food Classifier</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
             text-align: center;
+            padding: 20px;
         }
-        #previewImage {
-            max-width: 250px;
-            margin-top: 15px;
-            display: none;
-            border-radius: 10px;
-        }
-        #resultBox {
+        #preview {
             margin-top: 20px;
-            padding: 15px;
-            border: 2px solid black;
+            width: 250px;
             border-radius: 10px;
             display: none;
-            text-align: left;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
+    <h1>Food Classifier</h1>
 
-    <h2>Food Classifier</h2>
+    <input type="file" id="imageUpload" accept="image/*"><br>
 
-    <!-- Upload Section -->
-    <input type="file" id="imageUpload" accept="image/*">
-    <br>
-    <img id="previewImage" src="" alt="Preview">
+    <img id="preview" />
 
-    <!-- Result Section -->
-    <div id="resultBox">
-        <h3 id="foodName"></h3>
-        <p><strong>Calories:</strong> <span id="calories"></span></p>
-        <p><strong>Nutrients:</strong> <span id="nutrients"></span></p>
-        <p><strong>Benefits:</strong> <span id="benefits"></span></p>
-        <p><strong>Best Time:</strong> <span id="bestTime"></span></p>
-        <p><strong>Category:</strong> <span id="category"></span></p>
-    </div>
+    <div id="result"></div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
