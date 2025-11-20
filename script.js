@@ -1,6 +1,7 @@
-// ---------------------------
+//
+// -------------------------------
 // FOOD DATABASE
-// ---------------------------
+// -------------------------------
 
 const FOOD_DATA = {
     "orange juice": {
@@ -32,7 +33,7 @@ const FOOD_DATA = {
 
     "burger": {
         foodName: "Burger",
-        calories: "350–600 kcal",
+        calories: "350-600 kcal",
         nutrients: "Protein, Fat",
         benefits: "High energy",
         bestTime: "Lunch",
@@ -41,7 +42,7 @@ const FOOD_DATA = {
 
     "pizza": {
         foodName: "Pizza",
-        calories: "250–400 kcal per slice",
+        calories: "250-400 kcal per slice",
         nutrients: "Carbs, Fat, Protein",
         benefits: "High energy",
         bestTime: "Evening",
@@ -49,11 +50,15 @@ const FOOD_DATA = {
     }
 };
 
-// ---------------------------
-// SELECT HTML ELEMENTS
-// ---------------------------
 
-const fileInput = document.getElementById("imageInput");
+//
+// -------------------------------
+// SELECT HTML ELEMENTS
+// -------------------------------
+
+const fileInput = document.getElementById("imageUpload");
+const previewImg = document.getElementById("previewImg");
+
 const foodNameEl = document.getElementById("foodName");
 const caloriesEl = document.getElementById("calories");
 const nutrientsEl = document.getElementById("nutrients");
@@ -62,9 +67,10 @@ const bestTimeEl = document.getElementById("bestTime");
 const categoryEl = document.getElementById("category");
 
 
-// ---------------------------
-// HELPER: SET UI VALUES
-// ---------------------------
+//
+// -------------------------------
+// HELPER FUNCTIONS
+// -------------------------------
 
 function showData(data) {
     foodNameEl.textContent = data.foodName;
@@ -77,25 +83,27 @@ function showData(data) {
 
 function showNotFound() {
     foodNameEl.textContent = "Not found";
-    caloriesEl.textContent = "—";
-    nutrientsEl.textContent = "—";
-    benefitsEl.textContent = "—";
-    bestTimeEl.textContent = "—";
-    categoryEl.textContent = "—";
+    caloriesEl.textContent = "_";
+    nutrientsEl.textContent = "_";
+    benefitsEl.textContent = "_";
+    bestTimeEl.textContent = "_";
+    categoryEl.textContent = "_";
 }
 
-
-// ---------------------------
+//
+// -------------------------------
 // MAIN DETECTION LOGIC
-// ---------------------------
+// -------------------------------
 
 fileInput.addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Show image preview
+    previewImg.src = URL.createObjectURL(file);
+
     const imgName = file.name.toLowerCase();
 
-    // Try to detect food from filename keywords
     let matchedFood = null;
 
     for (let key in FOOD_DATA) {
@@ -105,7 +113,6 @@ fileInput.addEventListener("change", (event) => {
         }
     }
 
-    // Show result
     if (matchedFood) {
         showData(matchedFood);
     } else {
