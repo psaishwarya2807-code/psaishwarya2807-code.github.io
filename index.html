@@ -4,54 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Classifier</title>
-
     <style>
         body {
             font-family: Arial, sans-serif;
+            padding: 20px;
             text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
         }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            max-width: 400px;
-            margin: auto;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
-        }
-        img {
-            width: 100%;
-            border-radius: 10px;
+        #previewImage {
+            max-width: 250px;
             margin-top: 15px;
+            display: none;
+            border-radius: 10px;
         }
         #resultBox {
-            text-align: left;
             margin-top: 20px;
             padding: 15px;
-            background: #e9ecef;
+            border: 2px solid black;
             border-radius: 10px;
+            display: none;
+            text-align: left;
         }
     </style>
 </head>
-
 <body>
 
-    <h1>AI Food Classifier</h1>
+    <h2>Food Classifier</h2>
 
-    <div class="container">
-        <input type="file" id="fileInput" accept="image/*"><br>
+    <!-- Upload Section -->
+    <input type="file" id="imageUpload" accept="image/*">
+    <br>
+    <img id="previewImage" src="" alt="Preview">
 
-        <img id="preview" src="" alt="">
-
-        <div id="resultBox">
-            <p><strong>Food Name:</strong> <span id="foodName">—</span></p>
-            <p><strong>Calories:</strong> <span id="calories">—</span></p>
-            <p><strong>Nutrients:</strong> <span id="nutrients">—</span></p>
-            <p><strong>Benefits:</strong> <span id="benefits">—</span></p>
-            <p><strong>Best Time to Eat:</strong> <span id="time">—</span></p>
-            <p><strong>Category:</strong> <span id="category">—</span></p>
-        </div>
+    <!-- Result Section -->
+    <div id="resultBox">
+        <h3 id="foodName"></h3>
+        <p><strong>Calories:</strong> <span id="calories"></span></p>
+        <p><strong>Nutrients:</strong> <span id="nutrients"></span></p>
+        <p><strong>Benefits:</strong> <span id="benefits"></span></p>
+        <p><strong>Best Time:</strong> <span id="bestTime"></span></p>
+        <p><strong>Category:</strong> <span id="category"></span></p>
     </div>
 
     <script src="script.js"></script>
