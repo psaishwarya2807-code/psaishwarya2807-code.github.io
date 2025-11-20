@@ -1,101 +1,63 @@
-// Load TensorFlow model
-let model;
-
-async function loadModel() {
-    model = await tf.loadGraphModel(
-        "https://tfhub.dev/google/aiy/vision/classifier/food_V1/1/model.json",
-        { fromTFHub: true }
-    );
-    console.log("Model Loaded Successfully!");
-}
-loadModel();
-
-// When user uploads image
-document.getElementById("imageInput").addEventListener("change", async function (event) {
-    let file = event.target.files[0];
-    if (!file) return;
-
-    // Show preview
-    let img = document.getElementById("preview");
-    img.src = URL.createObjectURL(file);
-    img.style.display = "block";
-
-    // Wait for model
-    if (!model) {
-        alert("Model is still loading...");
-        return;
+const foodData = {
+    "pizza": {
+        type: "Junk Food",
+        ingredients: "Cheese, refined flour, sauces, toppings",
+        benefits: "Tasty but high in calories",
+        bestTime: "Sometimes only"
+    },
+    "burger": {
+        type: "Junk Food",
+        ingredients: "Bun, patty, cheese, oil",
+        benefits: "Good taste",
+        bestTime: "Rarely"
+    },
+    "biryani": {
+        type: "Healthy / Depends",
+        ingredients: "Rice, spices, chicken/veg",
+        benefits: "High protein, good carbs",
+        bestTime: "Lunch"
+    },
+    "idli": {
+        type: "Healthy",
+        ingredients: "Rice, urad dal",
+        benefits: "Easy to digest, low calorie",
+        bestTime: "Breakfast"
+    },
+    "dosa": {
+        type: "Healthy",
+        ingredients: "Rice, dal",
+        benefits: "Low fat, nutritious",
+        bestTime: "Breakfast or dinner"
+    },
+    "samosa": {
+        type: "Junk Food",
+        ingredients: "Potato, maida, oil",
+        benefits: "Tasty but fried",
+        bestTime: "Snacks only"
     }
+};
 
-    // Read image
-    const image = document.createElement("img");
-    image.src = img.src;
+document.getElementById("imageUpload").addEventListener("change", function() {
+    const file = this.files[0];
 
-    image.onload = async () => {
-        let tensor = tf.browser.fromPixels(image)
-            .resizeNearestNeighbor([224, 224])
-            .toFloat()
-            .expandDims();
+    if (file) {
+        const preview = document.getElementById("preview");
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
 
-        let predictions = await model.predict(tensor).data();
+        // Fake detection – very simple demo
+        let result = document.getElementById("result");
+        let foodName = Object.keys(foodData)[Math.floor(Math.random() * Object.keys(foodData).length)];
+        let data = foodData[foodName];
 
-        let index = predictions.indexOf(Math.max(...predictions));
-
-        let foodLabels = [
-            "apple", "banana", "orange", "grapes", "pineapple", "mango",
-            "pizza", "burger", "sandwich", "french fries", "pasta",
-            "idli", "dosa", "vada", "biryani", "rice", "chapati",
-            "milk", "egg", "chicken curry", "fish fry", "dal", "sambar"
-        ];
-
-        let detectedFood = foodLabels[index] || "Unknown Food";
-
-        const foodInfo = {
-            "apple": {
-                type: "Healthy",
-                benefits: "Rich in fiber and vitamin C.",
-                bestTime: "Morning"
-            },
-            "banana": {
-                type: "Healthy",
-                benefits: "Great for energy and digestion.",
-                bestTime: "Morning or evening"
-            },
-            "idli": {
-                type: "Healthy",
-                benefits: "Light and easy to digest.",
-                bestTime: "Breakfast"
-            },
-            "dosa": {
-                type: "Healthy",
-                benefits: "Good carbs & protein.",
-                bestTime: "Breakfast"
-            },
-            "biryani": {
-                type: "Heavy",
-                benefits: "High protein & carbs.",
-                bestTime: "Lunch"
-            },
-            "pizza": {
-                type: "Junk",
-                benefits: "Tasty but high calorie.",
-                bestTime: "Lunch"
-            }
-        };
-
-        let box = document.getElementById("results");
-        box.style.display = "block";
-
-        let details = foodInfo[detectedFood] || {
-            type: "Unknown",
-            benefits: "Not available",
-            bestTime: "--"
-        };
-
-        box.innerHTML = `
-            <h2>${detectedFood.toUpperCase()}</h2>
-            <p><b>Type:</b> ${details.type}</p>
-            <p><b>Benefits:</b> ${details.benefits}</p>
-            <p><b>Best Time to Eat:</b> ${details.bestTime}</p>
+        result.innerHTML = `
+            <h3>${foodName.toUpperCase()}</h3>
+            <p><b>Type:</b> ${data.type}</p>
+            <p><b>Ingredients:</b> ${data.ingredients}</p>
+            <p><b>Benefits:</b> ${data.benefits}</p>
+            <p><b>Best time to eat:</b> ${data.bestTime}</p>
         `;
-    };
+
+        result.style.display = "block";
+    }
 });
