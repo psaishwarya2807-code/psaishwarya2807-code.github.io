@@ -1,113 +1,114 @@
-// script.js
-// Replace with your actual backend endpoint that accepts a file and returns JSON.
-// Example response expected:
-// { foodName: "Orange juice", calories: "110 kcal", nutrients: "...", benefits: "...", bestTime: "...", category: "Juice" }
-const PREDICT_URL = "https://your-api.example/predict";
+// ---------------------------
+// FOOD DATABASE
+// ---------------------------
 
-const fileInput = document.getElementById("imageInput"); // change if your input id differs
-const chooseFileLabel = document.getElementById("chooseFileLabel"); // optional: shows file name
-const statusBox = document.getElementById("statusBox"); // optional: status text
-const btnDetect = document.getElementById("detectBtn"); // optional: if you have a button
+const FOOD_DATA = {
+    "orange juice": {
+        foodName: "Orange Juice",
+        calories: "110 kcal per glass",
+        nutrients: "Vitamin C, Potassium, Folate",
+        benefits: "Boosts immunity, improves skin health",
+        bestTime: "Morning",
+        category: "Healthy"
+    },
 
-// Output fields (IDs should match HTML)
-const outFoodName = document.getElementById("foodName");
-const outCalories = document.getElementById("calories");
-const outNutrients = document.getElementById("nutrients");
-const outBenefits = document.getElementById("benefits");
-const outBestTime = document.getElementById("bestTime");
-const outCategory = document.getElementById("category");
+    "apple": {
+        foodName: "Apple",
+        calories: "95 kcal",
+        nutrients: "Fiber, Vitamin C, Potassium",
+        benefits: "Good for digestion & immunity",
+        bestTime: "Morning / Afternoon",
+        category: "Healthy"
+    },
 
-// utility to clear UI
-function clearOutputs() {
-  outFoodName.textContent = "—";
-  outCalories.textContent = "—";
-  outNutrients.textContent = "—";
-  outBenefits.textContent = "—";
-  outBestTime.textContent = "—";
-  outCategory.textContent = "—";
+    "banana": {
+        foodName: "Banana",
+        calories: "105 kcal",
+        nutrients: "Potassium, Vitamin B6, Magnesium",
+        benefits: "Energy boost, good for muscles",
+        bestTime: "Morning / Pre-workout",
+        category: "Healthy"
+    },
+
+    "burger": {
+        foodName: "Burger",
+        calories: "350–600 kcal",
+        nutrients: "Protein, Fat",
+        benefits: "High energy",
+        bestTime: "Lunch",
+        category: "Junk Food"
+    },
+
+    "pizza": {
+        foodName: "Pizza",
+        calories: "250–400 kcal per slice",
+        nutrients: "Carbs, Fat, Protein",
+        benefits: "High energy",
+        bestTime: "Evening",
+        category: "Junk Food"
+    }
+};
+
+// ---------------------------
+// SELECT HTML ELEMENTS
+// ---------------------------
+
+const fileInput = document.getElementById("imageInput");
+const foodNameEl = document.getElementById("foodName");
+const caloriesEl = document.getElementById("calories");
+const nutrientsEl = document.getElementById("nutrients");
+const benefitsEl = document.getElementById("benefits");
+const bestTimeEl = document.getElementById("bestTime");
+const categoryEl = document.getElementById("category");
+
+
+// ---------------------------
+// HELPER: SET UI VALUES
+// ---------------------------
+
+function showData(data) {
+    foodNameEl.textContent = data.foodName;
+    caloriesEl.textContent = data.calories;
+    nutrientsEl.textContent = data.nutrients;
+    benefitsEl.textContent = data.benefits;
+    bestTimeEl.textContent = data.bestTime;
+    categoryEl.textContent = data.category;
 }
 
-// show status
-function setStatus(msg) {
-  if (statusBox) statusBox.textContent = msg;
-  console.log("STATUS:", msg);
+function showNotFound() {
+    foodNameEl.textContent = "Not found";
+    caloriesEl.textContent = "—";
+    nutrientsEl.textContent = "—";
+    benefitsEl.textContent = "—";
+    bestTimeEl.textContent = "—";
+    categoryEl.textContent = "—";
 }
 
-// handle response JSON safely
-function updateOutputs(data) {
-  // defensive: check keys exist
-  outFoodName.textContent = data.foodName ?? "—";
-  outCalories.textContent = data.calories ?? "—";
-  outNutrients.textContent = data.nutrients ?? "—";
-  outBenefits.textContent = data.benefits ?? "—";
-  outBestTime.textContent = data.bestTime ?? "—";
-  outCategory.textContent = data.category ?? "—";
-}
 
-// main upload-and-detect function
-async function uploadAndDetect(file) {
-  clearOutputs();
-  setStatus("Uploading image…");
-  const fm = new FormData();
-  fm.append("image", file);
+// ---------------------------
+// MAIN DETECTION LOGIC
+// ---------------------------
 
-  try {
-    const resp = await fetch(PREDICT_URL, {
-      method: "POST",
-      body: fm,
-      // NOTE: Do not set Content-Type to multipart/form-data manually — browser sets boundary automatically.
-      // If you're using a JSON endpoint, you must base64 the image and send JSON instead.
-    });
+fileInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-    setStatus(`Response status: ${resp.status}`);
-    if (!resp.ok) {
-      const text = await resp.text();
-      console.error("Server error:", resp.status, text);
-      setStatus("Server returned an error. See console for details.");
-      return;
+    const imgName = file.name.toLowerCase();
+
+    // Try to detect food from filename keywords
+    let matchedFood = null;
+
+    for (let key in FOOD_DATA) {
+        if (imgName.includes(key)) {
+            matchedFood = FOOD_DATA[key];
+            break;
+        }
     }
 
-    // parse JSON
-    const data = await resp.json();
-    console.log("Server response JSON:", data);
-    updateOutputs(data);
-    setStatus("Done.");
-  } catch (err) {
-    // network or CORS error
-    console.error("Network or CORS error:", err);
-    if (err instanceof TypeError) {
-      // fetch TypeError often indicates network failure or CORS in browsers
-      setStatus("Network/CORS error — check console. Is the server reachable and CORS-enabled?");
+    // Show result
+    if (matchedFood) {
+        showData(matchedFood);
     } else {
-      setStatus("Unexpected error — see console.");
+        showNotFound();
     }
-  }
-}
-
-// event: when file selected
-if (fileInput) {
-  fileInput.addEventListener("change", (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) {
-      setStatus("No file chosen.");
-      return;
-    }
-    if (chooseFileLabel) chooseFileLabel.textContent = file.name;
-    setStatus("File selected: " + file.name);
-
-    // direct auto-detect when chosen; if you prefer a "Detect" button, call uploadAndDetect(file) on button click
-    uploadAndDetect(file);
-  });
-}
-
-// optional: detect button if you have one
-if (btnDetect) {
-  btnDetect.addEventListener("click", () => {
-    const file = fileInput.files && fileInput.files[0];
-    if (!file) {
-      setStatus("Please choose an image first.");
-      return;
-    }
-    uploadAndDetect(file);
-  });
-              }
+});
