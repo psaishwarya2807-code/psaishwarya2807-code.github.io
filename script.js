@@ -1,81 +1,17 @@
-// Food database (20+ items)
-const foodDB = {
-    "apple": {
-        type: "Healthy",
-        ingredients: "Apple",
-        benefits: "Rich in fiber & vitamins. Good for digestion.",
-        bestTime: "Morning or evening"
-    },
-    "banana": {
-        type: "Healthy",
-        ingredients: "Banana",
-        benefits: "Boosts energy, rich in potassium.",
-        bestTime: "Morning before breakfast"
-    },
-    "pizza": {
-        type: "Junk",
-        ingredients: "Cheese, refined flour, sauce, toppings",
-        benefits: "Tasty but high in calories.",
-        bestTime: "Lunch (occasionally)"
-    },
-    "burger": {
-        type: "Junk",
-        ingredients: "Bread, patty, cheese",
-        benefits: "Rich in protein but high in fats.",
-        bestTime: "Lunch"
-    },
-    "dosa": {
-        type: "Healthy",
-        ingredients: "Rice, dal",
-        benefits: "Good carbs & protein.",
-        bestTime: "Breakfast"
-    },
-    "idli": {
-        type: "Healthy",
-        ingredients: "Rice, urad dal",
-        benefits: "Very healthy, great for digestion.",
-        bestTime: "Breakfast"
-    },
-    "samosa": {
-        type: "Junk",
-        ingredients: "Potato, maida, oil",
-        benefits: "Tasty but oily.",
-        bestTime: "Evening snack"
-    },
-    "rice": {
-        type: "Healthy",
-        ingredients: "Rice",
-        benefits: "Good carbs for energy.",
-        bestTime: "Lunch"
-    },
-    "chapati": {
-        type: "Healthy",
-        ingredients: "Wheat flour",
-        benefits: "Good fiber & nutrients.",
-        bestTime: "Lunch or dinner"
-    },
-    "chicken": {
-        type: "Healthy",
-        ingredients: "Chicken",
-        benefits: "High protein, muscle building.",
-        bestTime: "Lunch"
-    }
-};
+// Load TensorFlow model
+let model;
 
-// Simple AI-like fake classifier (matches keywords)
-function identifyFood(fileName) {
-    fileName = fileName.toLowerCase();
-
-    for (let food in foodDB) {
-        if (fileName.includes(food)) {
-            return food;
-        }
-    }
-    return null;
+async function loadModel() {
+    model = await tf.loadGraphModel(
+        "https://tfhub.dev/google/aiy/vision/classifier/food_V1/1/model.json",
+        { fromTFHub: true }
+    );
+    console.log("Model Loaded Successfully!");
 }
+loadModel();
 
 // When user uploads image
-document.getElementById("imageInput").addEventListener("change", function(event) {
+document.getElementById("imageInput").addEventListener("change", async function (event) {
     let file = event.target.files[0];
     if (!file) return;
 
@@ -84,24 +20,82 @@ document.getElementById("imageInput").addEventListener("change", function(event)
     img.src = URL.createObjectURL(file);
     img.style.display = "block";
 
-    // Identify food
-    let foodName = identifyFood(file.name);
-    let box = document.getElementById("results");
-
-    if (!foodName) {
-        box.style.display = "block";
-        box.innerHTML = "<h3>Unknown Food</h3><p>Try uploading a clear food picture.</p>";
+    // Wait for model
+    if (!model) {
+        alert("Model is still loading...");
         return;
     }
 
-    let data = foodDB[foodName];
+    // Read image
+    const image = document.createElement("img");
+    image.src = img.src;
 
-    box.style.display = "block";
-    box.innerHTML = `
-        <h2>${foodName.toUpperCase()}</h2>
-        <p><b>Type:</b> ${data.type}</p>
-        <p><b>Ingredients:</b> ${data.ingredients}</p>
-        <p><b>Benefits:</b> ${data.benefits}</p>
-        <p><b>Best Time to Eat:</b> ${data.bestTime}</p>
-    `;
+    image.onload = async () => {
+        let tensor = tf.browser.fromPixels(image)
+            .resizeNearestNeighbor([224, 224])
+            .toFloat()
+            .expandDims();
+
+        let predictions = await model.predict(tensor).data();
+
+        let index = predictions.indexOf(Math.max(...predictions));
+
+        let foodLabels = [
+            "apple", "banana", "orange", "grapes", "pineapple", "mango",
+            "pizza", "burger", "sandwich", "french fries", "pasta",
+            "idli", "dosa", "vada", "biryani", "rice", "chapati",
+            "milk", "egg", "chicken curry", "fish fry", "dal", "sambar"
+        ];
+
+        let detectedFood = foodLabels[index] || "Unknown Food";
+
+        const foodInfo = {
+            "apple": {
+                type: "Healthy",
+                benefits: "Rich in fiber and vitamin C.",
+                bestTime: "Morning"
+            },
+            "banana": {
+                type: "Healthy",
+                benefits: "Great for energy and digestion.",
+                bestTime: "Morning or evening"
+            },
+            "idli": {
+                type: "Healthy",
+                benefits: "Light and easy to digest.",
+                bestTime: "Breakfast"
+            },
+            "dosa": {
+                type: "Healthy",
+                benefits: "Good carbs & protein.",
+                bestTime: "Breakfast"
+            },
+            "biryani": {
+                type: "Heavy",
+                benefits: "High protein & carbs.",
+                bestTime: "Lunch"
+            },
+            "pizza": {
+                type: "Junk",
+                benefits: "Tasty but high calorie.",
+                bestTime: "Lunch"
+            }
+        };
+
+        let box = document.getElementById("results");
+        box.style.display = "block";
+
+        let details = foodInfo[detectedFood] || {
+            type: "Unknown",
+            benefits: "Not available",
+            bestTime: "--"
+        };
+
+        box.innerHTML = `
+            <h2>${detectedFood.toUpperCase()}</h2>
+            <p><b>Type:</b> ${details.type}</p>
+            <p><b>Benefits:</b> ${details.benefits}</p>
+            <p><b>Best Time to Eat:</b> ${details.bestTime}</p>
+        `;
+    };
 });
