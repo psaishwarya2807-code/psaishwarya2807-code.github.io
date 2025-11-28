@@ -4,23 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Classifier</title>
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #eef2f7;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            width: 90%;
+            margin: auto;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px #ccc;
+        }
+
+        #imagePreview {
+            width: 300px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        #output {
+            background: white;
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 3px 8px #ccc;
+            font-size: 18px;
+            text-align: left;
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1 class="title">🍽️ Food Classifier</h1>
+    <h1>🍽️ Food Classifier</h1>
 
-    <div class="upload-box">
-        <label for="foodImage" class="upload-label">Upload Food Image</label>
-        <input type="file" id="foodImage" accept="image/*">
+    <div class="container">
+        <h2>Upload Food Image</h2>
+        <input type="file" id="imageUpload">
+
+        <img id="imagePreview">
+        <div id="output"></div>
     </div>
 
-    <img id="preview" class="preview" style="display:none; width:250px; margin-top:15px;" />
+    <!-- Teachable Machine Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 
-    <div id="result" class="result-box"></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+    <!-- Link JavaScript -->
     <script src="script.js"></script>
+
 </body>
 </html>
