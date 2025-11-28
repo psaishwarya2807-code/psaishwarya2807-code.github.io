@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Image Preview Test</title>
+  <title>Image Upload Preview</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
+      text-align: center;
       padding: 20px;
+      background: #f2f2f2;
     }
-    img {
+
+    #preview {
       width: 300px;
       margin-top: 20px;
       display: none;
@@ -19,12 +23,15 @@
   </style>
 </head>
 <body>
-  <h2>Upload Image Test</h2>
 
-  <input type="file" id="imageInput" accept="image/*" capture="camera">
+  <h2>Upload Image</h2>
 
-  <img id="preview" />
+  <!-- Now shows BOTH gallery + camera options -->
+  <input type="file" id="imageInput" accept="image/*">
+
+  <img id="preview">
 
   <script src="script.js"></script>
+
 </body>
 </html>
