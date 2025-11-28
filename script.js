@@ -17,7 +17,7 @@ input.addEventListener("change", () => {
     };
 
     reader.onerror = function () {
-        alert("Error reading file!");
+        alert("Error loading image!");
     };
 
     reader.readAsDataURL(file);
