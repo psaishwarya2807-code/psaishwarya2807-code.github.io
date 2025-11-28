@@ -8,17 +8,21 @@
     body { font-family: Arial; text-align: center; margin-top: 50px; }
     img { max-width: 300px; margin-top: 20px; }
     #result { font-size: 20px; margin-top: 20px; font-weight: bold; }
+    button { margin: 10px; padding: 10px 20px; font-size: 16px; }
   </style>
 </head>
 <body>
 
   <h1>Food Classifier</h1>
-  
-  <input type="file" id="imageInput" accept="image/*" capture="environment">
-  <br>
+
+  <button id="cameraBtn">Take Photo</button>
+  <button id="galleryBtn">Choose from Gallery</button>
+  <input type="file" id="imageInput" accept="image/*" style="display:none;">
+
   <img id="preview" src="" alt="Image Preview">
   <div id="result"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
   <script src="script.js"></script>
 </body>
 </html>
