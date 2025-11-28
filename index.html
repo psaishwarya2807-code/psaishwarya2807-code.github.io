@@ -11,14 +11,16 @@
     <h1 class="title">🍽️ Food Classifier</h1>
 
     <div class="upload-box">
-        <label for="imageUpload" class="upload-label">Upload Food Image</label>
-        <input type="file" id="imageUpload" accept="image/*">
+        <label for="foodImage" class="upload-label">Upload Food Image</label>
+        <input type="file" id="foodImage" accept="image/*">
     </div>
 
-    <img id="preview" class="preview" style="display:none;" />
+    <img id="preview" class="preview" style="display:none; width:250px; margin-top:15px;" />
 
-    <div id="result" class="result-box" style="display:none;"></div>
+    <div id="result" class="result-box"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
     <script src="script.js"></script>
 </body>
 </html>
