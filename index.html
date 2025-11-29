@@ -1,28 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Food Classifier</title>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    img { max-width: 300px; margin-top: 20px; }
-    #result { font-size: 20px; margin-top: 20px; font-weight: bold; }
-    button { margin: 10px; padding: 10px 20px; font-size: 16px; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 18px;
+      border-radius: 6px;
+      border: 1px solid #333;
+    }
+
+    #preview {
+      max-width: 90%;
+      margin-top: 20px;
+      display: none;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
-<body>
 
+<body>
   <h1>Food Classifier</h1>
 
-  <button id="cameraBtn">Take Photo</button>
-  <button id="galleryBtn">Choose from Gallery</button>
-  <input type="file" id="imageInput" accept="image/*" style="display:none;">
+  <!-- Buttons -->
+  <button id="takePhotoBtn">Take Photo</button>
+  <button id="choosePhotoBtn">Choose from Gallery</button>
 
-  <img id="preview" src="" alt="Image Preview">
+  <!-- Status text -->
+  <div id="status">Loading...</div>
+
+  <!-- Image preview -->
+  <img id="preview" alt="Image Preview">
+
+  <!-- Result -->
   <div id="result"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
