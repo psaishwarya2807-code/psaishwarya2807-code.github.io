@@ -7,33 +7,23 @@
 
   <style>
     body {
-      font-family: Arial, sans-serif;
       text-align: center;
+      font-family: Arial, sans-serif;
       padding: 20px;
     }
-
+    #preview {
+      width: 250px;
+      margin-top: 20px;
+      border-radius: 10px;
+      display: none;
+    }
     button {
       padding: 12px 20px;
       margin: 10px;
       font-size: 18px;
-      border-radius: 6px;
-      border: 1px solid #333;
-    }
-
-    #preview {
-      max-width: 90%;
-      margin-top: 20px;
-      display: none;
-    }
-
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-
-    #status {
-      margin-top: 10px;
-      font-weight: bold;
+      border-radius: 10px;
+      border: 1px solid #444;
+      background: white;
     }
   </style>
 </head>
@@ -41,20 +31,18 @@
 <body>
   <h1>Food Classifier</h1>
 
-  <button id="takePhotoBtn">Take Photo</button>
-  <button id="choosePhotoBtn">Choose from Gallery</button>
+  <button onclick="cameraInput.click()">Take Photo</button>
+  <button onclick="galleryInput.click()">Choose from Gallery</button>
+
+  <input type="file" accept="image/*" capture="camera" id="cameraInput" style="display:none">
+  <input type="file" accept="image/*" id="galleryInput" style="display:none">
 
   <div id="status">Loading...</div>
-
-  <img id="preview" alt="Image Preview">
+  <img id="preview">
 
   <div id="result"></div>
 
-  <!-- TensorFlow Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
-
-  <!-- Your JS -->
-  <script src="script.js"></script>
+  <!-- NEW ES MODULE script -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
