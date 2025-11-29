@@ -1,71 +1,49 @@
+import * as tf from "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.esm.js";
+import * as mobilenet from "https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.esm.js";
+
 let model;
 
-// Elements
 const statusDiv = document.getElementById("status");
 const previewImage = document.getElementById("preview");
 const resultDiv = document.getElementById("result");
-const takePhotoBtn = document.getElementById("takePhotoBtn");
-const choosePhotoBtn = document.getElementById("choosePhotoBtn");
 
-// Load MobileNet
-(async () => {
-  statusDiv.textContent = "Loading model...";
-  model = await mobilenet.load();
-  statusDiv.textContent = "Model Loaded!";
-})();
-
-// Open Camera
-takePhotoBtn.addEventListener("click", () => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-  input.capture = "camera";
-  input.onchange = () => displayAndClassify(input.files[0]);
-  input.click();
-});
-
-// Choose from gallery
-choosePhotoBtn.addEventListener("click", () => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-  input.onchange = () => displayAndClassify(input.files[0]);
-  input.click();
-});
-
-// Display image + classify
-function displayAndClassify(file) {
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-    previewImage.src = e.target.result;
-    previewImage.style.display = "block";
-
-    // Delay so image loads before prediction
-    setTimeout(() => classifyImage(), 500);
-  };
-
-  reader.readAsDataURL(file);
+async function loadModel() {
+    statusDiv.textContent = "Loading model...";
+    model = await mobilenet.load();
+    statusDiv.textContent = "Model Loaded!";
 }
 
-// Classify using MobileNet
+loadModel();
+
+cameraInput.onchange = handleImage;
+galleryInput.onchange = handleImage;
+
+function handleImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        previewImage.style.display = "block";
+
+        setTimeout(() => classifyImage(), 500);
+    };
+
+    reader.readAsDataURL(file);
+}
+
 async function classifyImage() {
-  if (!model) {
-    statusDiv.textContent = "Model not loaded yet!";
-    return;
-  }
+    try {
+        const predictions = await model.classify(previewImage);
 
-  statusDiv.textContent = "Classifying...";
-
-  const predictions = await model.classify(previewImage);
-
-  statusDiv.textContent = "Done!";
-
-  // Show results
-  resultDiv.innerHTML = `
-    <h2>Top Results:</h2>
-    <p>${predictions[0].className} — ${(predictions[0].probability * 100).toFixed(2)}%</p>
-    <p>${predictions[1].className} — ${(predictions[1].probability * 100).toFixed(2)}%</p>
-    <p>${predictions[2].className} — ${(predictions[2].probability * 100).toFixed(2)}%</p>
-  `;
+        resultDiv.innerHTML = `
+            <h3>Prediction:</h3>
+            <p><b>${predictions[0].className}</b></p>
+            <p>Confidence: ${(predictions[0].probability * 100).toFixed(2)}%</p>
+        `;
+    } catch (err) {
+        resultDiv.innerHTML = "Error detecting food.";
+    }
 }
