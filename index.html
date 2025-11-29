@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Food Classifier</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -40,20 +41,20 @@
 <body>
   <h1>Food Classifier</h1>
 
-  <!-- Buttons -->
   <button id="takePhotoBtn">Take Photo</button>
   <button id="choosePhotoBtn">Choose from Gallery</button>
 
-  <!-- Status text -->
   <div id="status">Loading...</div>
 
-  <!-- Image preview -->
   <img id="preview" alt="Image Preview">
 
-  <!-- Result -->
   <div id="result"></div>
 
-  <!-- Script -->
+  <!-- TensorFlow Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+
+  <!-- Your JS -->
   <script src="script.js"></script>
 </body>
 </html>
