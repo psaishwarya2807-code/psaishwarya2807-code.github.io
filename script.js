@@ -1,49 +1,51 @@
-import * as tf from "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.esm.js";
-import * as mobilenet from "https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.esm.js";
+const URL = "https://teachablemachine.withgoogle.com/models/your-model-id/"; 
+// ❗ Replace your-model-id with your actual Teachable Machine model ID
 
-let model;
-
-const statusDiv = document.getElementById("status");
-const previewImage = document.getElementById("preview");
-const resultDiv = document.getElementById("result");
+let model, maxPredictions;
 
 async function loadModel() {
-    statusDiv.textContent = "Loading model...";
-    model = await mobilenet.load();
-    statusDiv.textContent = "Model Loaded!";
-}
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
 
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
+}
 loadModel();
 
-cameraInput.onchange = handleImage;
-galleryInput.onchange = handleImage;
+function openCamera() {
+    const input = document.getElementById("fileInput");
+    input.capture = "camera";
+    input.click();
+}
 
-function handleImage(event) {
+function openGallery() {
+    const input = document.getElementById("fileInput");
+    input.removeAttribute("capture");
+    input.click();
+}
+
+document.getElementById("fileInput").addEventListener("change", function (event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
+    const img = document.getElementById("preview");
+    img.src = URL.createObjectURL(file);
+    img.style.display = "block";
 
-    reader.onload = (e) => {
-        previewImage.src = e.target.result;
-        previewImage.style.display = "block";
+    classifyImage(img);
+});
 
-        setTimeout(() => classifyImage(), 500);
-    };
-
-    reader.readAsDataURL(file);
-}
-
-async function classifyImage() {
-    try {
-        const predictions = await model.classify(previewImage);
-
-        resultDiv.innerHTML = `
-            <h3>Prediction:</h3>
-            <p><b>${predictions[0].className}</b></p>
-            <p>Confidence: ${(predictions[0].probability * 100).toFixed(2)}%</p>
-        `;
-    } catch (err) {
-        resultDiv.innerHTML = "Error detecting food.";
+async function classifyImage(image) {
+    if (!model) {
+        document.getElementById("result").innerText = "Model is still loading...";
+        return;
     }
+
+    const prediction = await model.predict(image);
+    prediction.sort((a, b) => b.probability - a.probability);
+
+    const top = prediction[0];
+    document.getElementById("result").innerHTML =
+        "Prediction: <b>" + top.className + "</b><br>Confidence: " +
+        Math.round(top.probability * 100) + "%";
 }
