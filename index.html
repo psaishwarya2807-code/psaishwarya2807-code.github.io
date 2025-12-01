@@ -1,48 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Food Classifier</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Classifier</title>
 
-  <style>
-    body {
-      text-align: center;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    #preview {
-      width: 250px;
-      margin-top: 20px;
-      border-radius: 10px;
-      display: none;
-    }
-    button {
-      padding: 12px 20px;
-      margin: 10px;
-      font-size: 18px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background: white;
-    }
-  </style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid black;
+        }
+        #preview {
+            margin-top: 20px;
+            width: 300px;
+            border-radius: 10px;
+            display: none;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 </head>
-
 <body>
-  <h1>Food Classifier</h1>
 
-  <button onclick="cameraInput.click()">Take Photo</button>
-  <button onclick="galleryInput.click()">Choose from Gallery</button>
+    <h1>Food Classifier</h1>
 
-  <input type="file" accept="image/*" capture="camera" id="cameraInput" style="display:none">
-  <input type="file" accept="image/*" id="galleryInput" style="display:none">
+    <button onclick="openCamera()">Take Photo</button>
+    <button onclick="openGallery()">Choose from Gallery</button>
 
-  <div id="status">Loading...</div>
-  <img id="preview">
+    <input type="file" id="fileInput" accept="image/*" style="display:none">
+    <img id="preview" />
 
-  <div id="result"></div>
+    <div id="result"></div>
 
-  <!-- NEW ES MODULE script -->
-  <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
