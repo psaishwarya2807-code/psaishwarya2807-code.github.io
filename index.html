@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Food Classifier</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -9,16 +10,14 @@
 
   <h1>Food Classifier</h1>
 
-  <div class="card">
-    <button onclick="openCamera()">📷 Camera</button>
-    <button onclick="openGallery()">🖼 Gallery</button>
-  </div>
+  <button onclick="openCamera()">📷 Camera</button>
+  <button onclick="openGallery()">🖼 Gallery</button>
 
-  <!-- Hidden Inputs -->
-  <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
-  <input type="file" id="galleryInput" accept="image/*" style="display:none">
+  <!-- HIDDEN INPUTS -->
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
+  <input type="file" id="galleryInput" accept="image/*" hidden>
 
-  <!-- Image Preview -->
+  <!-- IMAGE PREVIEW -->
   <div id="previewBox">
     <img id="preview" />
   </div>
