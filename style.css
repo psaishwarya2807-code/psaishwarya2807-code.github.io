@@ -1,38 +1,32 @@
 body {
-  font-family: Poppins, Arial, sans-serif;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
   text-align: center;
-  background: #f5f7fa;
-  padding: 20px;
 }
 
-.title {
-  font-size: 32px;
-  margin-bottom: 20px;
+h1 {
+  margin-top: 40px;
 }
 
-.upload-box {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  display: inline-block;
+.card {
+  margin-top: 30px;
 }
 
 button {
-  padding: 10px 20px;
+  padding: 12px 20px;
   margin: 10px;
   font-size: 16px;
   border-radius: 10px;
+  border: 2px solid #333;
   cursor: pointer;
 }
 
-#preview {
-  width: 250px;
-  margin-top: 15px;
-  display: none;
-  border-radius: 10px;
+#previewBox {
+  margin-top: 20px;
 }
 
-#result {
-  margin-top: 15px;
-  font-weight: bold;
+#preview {
+  max-width: 90%;
+  border-radius: 10px;
+  display: none;
 }
