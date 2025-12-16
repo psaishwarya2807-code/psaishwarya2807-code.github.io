@@ -18,8 +18,9 @@ function showImage(event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = () => {
+  reader.onload = function () {
     preview.src = reader.result;
+    preview.style.display = "block";
   };
   reader.readAsDataURL(file);
 }
