@@ -1,5 +1,3 @@
-alert("Website JS connected!");
-
 const cameraInput = document.getElementById("cameraInput");
 const galleryInput = document.getElementById("galleryInput");
 const preview = document.getElementById("preview");
@@ -20,9 +18,8 @@ function showImage(event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function () {
+  reader.onload = () => {
     preview.src = reader.result;
-    preview.style.display = "block";
   };
   reader.readAsDataURL(file);
 }
