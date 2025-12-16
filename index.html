@@ -1,27 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Food Classifier</title>
-
   <link rel="stylesheet" href="style.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest"></script>
 </head>
-
 <body>
-  <h1 class="title">Food Classifier</h1>
 
-  <div class="upload-box">
-    <input type="file" id="fileInput" accept="image/*" hidden>
+  <h1>Food Classifier</h1>
 
+  <div class="card">
     <button onclick="openCamera()">📷 Camera</button>
     <button onclick="openGallery()">🖼 Gallery</button>
+  </div>
 
-    <img id="preview">
-    <div id="result"></div>
+  <!-- Hidden Inputs -->
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
+  <input type="file" id="galleryInput" accept="image/*" style="display:none">
+
+  <!-- Image Preview -->
+  <div id="previewBox">
+    <img id="preview" />
   </div>
 
   <script src="script.js"></script>
