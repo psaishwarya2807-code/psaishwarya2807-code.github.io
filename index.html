@@ -1,27 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Food Classifier</title>
-  <link rel="stylesheet" href="style.css">
+    <title>Food Image Recognition</title>
 </head>
 <body>
-
-  <h1>Food Classifier</h1>
-
-  <button onclick="openCamera()">📷 Camera</button>
-  <button onclick="openGallery()">🖼 Gallery</button>
-
-  <!-- HIDDEN INPUTS -->
-  <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden>
-  <input type="file" id="galleryInput" accept="image/*" hidden>
-
-  <!-- IMAGE PREVIEW -->
-  <div id="previewBox">
-    <img id="preview" />
-  </div>
-
-  <script src="script.js"></script>
+    <h2>Upload Food Image</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <br><br>
+        <button type="submit">Upload</button>
+    </form>
 </body>
 </html>
