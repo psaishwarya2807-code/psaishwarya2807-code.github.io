@@ -1,14 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Food Image Recognition</title>
+  <meta charset="UTF-8">
+  <title>Food Classifier</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Upload Food Image</h2>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" required>
-        <br><br>
-        <button type="submit">Upload</button>
-    </form>
+
+  <div class="container">
+    <h1>🍎 Food Image Classifier</h1>
+    <p>Upload a food image to check whether it is Healthy or Junk</p>
+
+    <input type="file" id="imageInput" accept="image/*">
+    <br><br>
+
+    <img id="preview" alt="Image Preview">
+    <br><br>
+
+    <button onclick="analyzeFood()">Analyze</button>
+
+    <h2 id="result"></h2>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
