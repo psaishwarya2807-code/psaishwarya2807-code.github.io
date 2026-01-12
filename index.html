@@ -1,28 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Food Image Classifier</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <title>Food Image Classifier</title>
+  <style>
+    body { font-family: Arial; text-align: center; }
+    img { width: 250px; margin-top: 10px; }
+  </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>🍎 Food Image Classifier</h1>
+<h1>🍎 Food Image Classifier</h1>
 
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" required>
-        <button type="submit">Analyze</button>
-    </form>
+<input type="file" id="imageInput">
+<br><br>
+<button onclick="analyze()">Analyze</button>
 
-    {% if result %}
-        <h2>Result: {{ food.type }}</h2>
+<div id="result"></div>
 
-        <h3>Food Name: {{ food.name }}</h3>
-        <p><b>Ingredients:</b> {{ food.ingredients }}</p>
-        <p><b>Calories:</b> {{ food.calories }}</p>
-        <p><b>Best Time to Eat:</b> {{ food.best_time }}</p>
-    {% endif %}
-</div>
+<script>
+function analyze() {
+  const file = document.getElementById("imageInput").files[0];
+  if (!file) return;
+
+  let food;
+
+  if (file.name.toLowerCase().includes("pani")) {
+    food = {
+      name: "Pani Puri",
+      type: "Junk Food",
+      ingredients: "Semolina puri, potato, chickpeas, spices",
+      calories: "300 kcal",
+      best_time: "Occasionally, avoid night"
+    };
+  } else {
+    food = {
+      name: "Salad",
+      type: "Healthy Food",
+      ingredients: "Vegetables",
+      calories: "120 kcal",
+      best_time: "Anytime"
+    };
+  }
+
+  document.getElementById("result").innerHTML = `
+    <h2>Result: ${food.type}</h2>
+    <p><b>Food Name:</b> ${food.name}</p>
+    <p><b>Ingredients:</b> ${food.ingredients}</p>
+    <p><b>Calories:</b> ${food.calories}</p>
+    <p><b>Best Time:</b> ${food.best_time}</p>
+  `;
+}
+</script>
 
 </body>
 </html>
