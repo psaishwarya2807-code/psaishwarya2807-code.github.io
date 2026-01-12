@@ -1,27 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Food Classifier</title>
-  <link rel="stylesheet" href="style.css">
+    <title>Food Image Classifier</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-  <div class="container">
+<div class="card">
     <h1>🍎 Food Image Classifier</h1>
-    <p>Upload a food image to check whether it is Healthy or Junk</p>
 
-    <input type="file" id="imageInput" accept="image/*">
-    <br><br>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <button type="submit">Analyze</button>
+    </form>
 
-    <img id="preview" alt="Image Preview">
-    <br><br>
+    {% if result %}
+        <h2>Result: {{ food.type }}</h2>
 
-    <button onclick="analyzeFood()">Analyze</button>
+        <h3>Food Name: {{ food.name }}</h3>
+        <p><b>Ingredients:</b> {{ food.ingredients }}</p>
+        <p><b>Calories:</b> {{ food.calories }}</p>
+        <p><b>Best Time to Eat:</b> {{ food.best_time }}</p>
+    {% endif %}
+</div>
 
-    <h2 id="result"></h2>
-  </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
